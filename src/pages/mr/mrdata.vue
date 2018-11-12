@@ -1,0 +1,157 @@
+<template>
+  <el-container>
+    <el-header class="elmro">这是MRO的数据</el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-input placeholder="输入关键字进行过滤"
+                  v-model="filterText">
+        </el-input>
+        <el-tree class="filter-tree"
+                 :data="headerData2"
+                 :props="defaultProps"
+                 default-expand-all
+                 :filter-node-method="filterNode"
+                 @node-click="handleNodeClick">
+          ref="tree2">
+        </el-tree>
+      </el-aside>
+      <el-container>
+        <el-main>
+          <el-table :data="data_list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+                    style="width: 100%">
+            <el-table-column :label="key"
+                             v-for="(date, key) in data_list[0]"
+                             :key="key"
+                             :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{scope.row[key]}}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-main>
+        <el-footer>
+          <diV style="text-align: center">
+            <el-pagination @size-change="handleSizeChange"
+                           @current-change="handleCurrentChange"
+                           :current-page.sync="currentPage"
+                           :page-size="pagesize"
+                           layout="prev, pager, next, jumper"
+                           :total="total">
+            </el-pagination>
+          </div>
+        </el-footer>
+      </el-container>
+    </el-container>
+  </el-container>
+</template>
+<script>
+import { mapState } from 'vuex'
+export default {
+  computed: {
+    ...mapState({
+      prom: (state) => state.prom,
+      user: (state) => state.user
+    })
+  },
+  watch: {
+    filterText (val) {
+      this.$refs.tree2.filter(val)
+    }
+  },
+  created () {
+    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
+    console.log('mrdata.vue create 函数')
+    console.log(this.prom.prom_pname)
+    console.log(this.user.user.username)
+    this.$http.post('http://192.168.0.237:2860/api/MRTest/GetTableName',
+      {},
+      headers
+    ).then((response) => {
+      console.log('created')
+      this.headerData2 = response
+      console.log(response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  methods: {
+    handleNodeClick (data) {
+      var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
+      console.log('这是 handleNodeClick 函数')
+      // var mr = ['MRO', 'MRE', 'MRS']
+      var mrname = data.id
+      this.$http.post('http://192.168.0.237:2860/api/MRTest/GetData',
+        { 'tableName': mrname },
+        headers
+      ).then((response) => {
+        console.log(response)
+        // this.data_list = JSON.parse(response)
+        this.data_list = response
+        this.total = this.data_list.length
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      console.log(value)
+      console.log(data)
+      return data.label.indexOf(value) !== -1
+    },
+    handleSizeChange (val) {
+      // 条数数目改变的时候发生
+      console.log(`当前页: ${val}`)
+    },
+    handleCurrentChange (currentPage) {
+      // 当前页面该改变时发生
+      this.currentPage = currentPage
+      console.log(`当前页: ${currentPage}`)
+    }
+  },
+  data () {
+    return {
+      total: 0, // 默认数据总数
+      pagesize: 10, // 每页的数据条数
+      currentPage: 1, // 默认开始页面
+      data_list: [],
+      data_list2: [{ 'id': '1', 'name': 'duhanxu' }, { 'id': '2', 'name': 'hedajuan' }, { 'id': '3', 'name': 'duhanxu' }, { 'id': '4', 'name': 'hedajuan' }],
+      filterText: '',
+      headerData2: [],
+      headerData: [{
+        id: 1,
+        label: 'MRO',
+        children: [{
+          id: 4,
+          label: 'ltescplrulqci1'
+        },
+        {
+          id: 5,
+          label: 'ltescrip'
+        },
+        {
+          id: 6,
+          label: 'ltescrsrp'
+        }
+        ]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.elmro {
+  background-color: #b3c0d1;
+  color: #333;
+  line-height: 60px;
+  text-align: center;
+}
+
+.el-aside {
+  color: #333;
+}
+</style>

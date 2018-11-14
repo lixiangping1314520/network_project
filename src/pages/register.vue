@@ -77,13 +77,14 @@
       ...mapActions(['register']),
       // 注册
       handregister () {
+        console.log(1)
         // 两次输入的密码是否一致
         if (this.confirmPassword !== this.password) {
           return this.$message.warning('两次输入的密码不一致')
         }
         // 信息填写是否正确完善
         if (!this.ueserNamePattern() || !this.emailPattern() || !this.passwordPattern()) {
-          return this.$message.warning('请正确填写注册信息')
+          return this.$message.warning('请完整正确填写注册信息')
         }
         // 所有信息填写正确后
         // 将用户信息post至后台
@@ -93,9 +94,14 @@
           confirmPassword: this.confirmPassword,
           email: this.email
         }
+        console.log(1)
         this.$http.post('http://192.168.0.237:2860/api/WebUser/Register', userMessage).then(res => {
-          if (res !== '注册成功') {
-            return
+          console.log(res)
+          if (res === '已经存在该用户名') {
+            return this.$message.warning('用户名已存在')
+          }
+          if (res === '该邮箱已被注册') {
+            return this.$message.warning('该邮箱已被注册')
           }
           this.$message.success('注册成功')
           this.$router.push({name: 'login'})

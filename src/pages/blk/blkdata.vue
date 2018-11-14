@@ -80,6 +80,22 @@ export default {
       pageNum_2: 0
     }
   },
+  created () {
+    console.log('bulkcm crate 函数')
+    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
+    this.$http.post(this.user.httppath + '/api/Bulkcm/GetTableName',
+      {},
+      this.headers
+    ).then((response) => {
+      this.tables = response
+
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange_1(1)
+      this.initPageNum_1()
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
   methods: {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
@@ -126,22 +142,6 @@ export default {
         console.log(error)
       })
     }
-  },
-  created () {
-    console.log('bulkcm crate 函数')
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
-    this.$http.post(this.user.httppath + '/api/Bulkcm/GetTableName',
-      {},
-      this.headers
-    ).then((response) => {
-      this.tables = response
-
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange_1(1)
-      this.initPageNum_1()
-    }).catch((error) => {
-      console.log(error)
-    })
   }
 }
 </script>

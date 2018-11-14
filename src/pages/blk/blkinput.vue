@@ -5,7 +5,7 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="http://192.168.0.237:2860/api/Bulkcm/Upload"
+                 action="uploadAction"
                  :headers="head"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
@@ -75,6 +75,7 @@ export default {
   },
   data () {
     return {
+      uploadAction: '',
       processNum: 0,
       head: {},
       needTabel: [],
@@ -88,6 +89,36 @@ export default {
   },
   destroyed () {
     this.needTabel = []
+  },
+  created () {
+    console.log('这是create blkinput 函数')
+    console.log('created first')
+    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' }
+    this.uploadAction = this.user.httppath + '/api/Bulkcm/Upload'
+    var heads = { headers: this.head }
+    this.$http.post(this.user.httppath + '/api/Bulkcm/GetTables',
+      {},
+      heads
+    ).then((response) => {
+      this.needTabel = response
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange(1)
+      this.initPageNum()
+      for (let i = 0; i < response.length; i++) {
+        if (response[i].isOk === 'True') {
+          this.table.push(this.needTabel[i])
+        }
+      }
+      this.toggleSelection(this.table)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  mounted () {
+    // this.toggleSelection(this.table)
+    setTimeout(() => {
+      this.toggleSelection(this.table)
+    }, 1000)
   },
   methods: {
     // 点击跳转页面，显示对应的数据
@@ -125,10 +156,10 @@ export default {
     },
     processbar () {
       console.log('函数 processbar 测试进度条某一刻的值')
-      var heads = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'bulkcm' } }
+
       this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
         {},
-        heads
+        { headers: this.head }
       ).then((response) => {
         console.log('函数 processbar 响应')
         console.log(response)
@@ -143,8 +174,6 @@ export default {
       console.log('dbInput')
       this.isloading = true
       // NProgress.start()
-      var heads = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'bulkcm' } }
-      console.log(heads)
       var tables = []
       for (var key in this.multipleSelection) {
         tables.push(this.multipleSelection[key].title)
@@ -155,7 +184,7 @@ export default {
       console.log(this.tables)
       this.$http.post(this.user.httppath + '/api/Bulkcm/BulkParse',
         { tableName: tables },
-        heads
+        { headers: this.head }
       ).then((response) => {
         console.log('函数 dbInput success')
         console.log(response)
@@ -213,35 +242,6 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
     }
-  },
-  created () {
-    console.log('这是create blkinput 函数')
-    console.log('created first')
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' }
-    var heads = { headers: this.head }
-    this.$http.post(this.user.httppath + '/api/Bulkcm/GetTables',
-      {},
-      heads
-    ).then((response) => {
-      this.needTabel = response
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange(1)
-      this.initPageNum()
-      for (let i = 0; i < response.length; i++) {
-        if (response[i].isOk === 'True') {
-          this.table.push(this.needTabel[i])
-        }
-      }
-      this.toggleSelection(this.table)
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  mounted () {
-    // this.toggleSelection(this.table)
-    setTimeout(() => {
-      this.toggleSelection(this.table)
-    }, 1000)
   }
 }
 </script>

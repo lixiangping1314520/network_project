@@ -175,6 +175,27 @@ export default {
 
     }
   },
+  created () {
+    console.log('bulkcm crate 函数')
+    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
+    this.$http.post(this.user.httppath + '/api/Bulkcm/CheckCfg',
+      {},
+      this.headers
+    ).then((response) => {
+      console.log(response)
+      this.tables = response
+
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange_1(1)
+      this.initPageNum_1()
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  mounted () {
+    console.log(document.getElementsByClassName('el-container is-vertical')[0].offsetHeight)
+    this.height = document.getElementsByClassName('el-container is-vertical')[0].offsetHeight - 100 + 'px'
+  },
   methods: {// 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
@@ -293,27 +314,6 @@ export default {
       this.handleCurrentChange_2(1)
       this.initPageNum_2()
     }
-  },
-  created () {
-    console.log('bulkcm crate 函数')
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
-    this.$http.post(this.user.httppath + '/api/Bulkcm/CheckCfg',
-      {},
-      this.headers
-    ).then((response) => {
-      console.log(response)
-      this.tables = response
-
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange_1(1)
-      this.initPageNum_1()
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  mounted () {
-    console.log(document.getElementsByClassName('el-container is-vertical')[0].offsetHeight)
-    this.height = document.getElementsByClassName('el-container is-vertical')[0].offsetHeight - 100 + 'px'
   }
 }
 </script>

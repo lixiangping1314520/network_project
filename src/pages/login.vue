@@ -73,17 +73,17 @@ export default {
         username: this.username,
         password: this.password
       }
-      this.login({
-        username: this.username,
-        password: this.password,
-        ticket: 'asdaasdadad'
-      })
-      this.$notify({
-        title: '成功',
-        message: '登陆成功',
-        type: 'success'
-      })
-      this.$router.push({ name: 'home' })
+      // this.login({
+      //   username: this.username,
+      //   password: this.password,
+      //   ticket: 'asdaasdadad'
+      // })
+      // this.$notify({
+      //   title: '成功',
+      //   message: '登陆成功',
+      //   type: 'success'
+      // })
+      // this.$router.push({ name: 'home' })
       // 判断密码和名字是否正确与一致
       // let users = this.$store.state.user.regisiterUser
       // users.forEach((userItem) => {
@@ -96,12 +96,18 @@ export default {
       //     this.$router.push({name: 'home'})
       //   }
       // })
-      console.log(1)
       this.$http.post('http://192.168.0.237:2860/api/WebUser/Login', loginUser).then(res => {
-        if (res === '不存在该用户' || res === '密码不正确，请重新输入') {
+        console.log(res)
+        if (res === '不存在该用户') {
           this.$notify({
             title: '警告',
-            message: '账号和密码输入错误',
+            message: '不存在该用户',
+            type: 'warning'
+          })
+        } else if (res === '密码不正确，请重新输入') {
+          this.$notify({
+            title: '警告',
+            message: '密码输入错误',
             type: 'warning'
           })
         } else {

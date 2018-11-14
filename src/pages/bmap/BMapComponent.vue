@@ -70,8 +70,8 @@ export default {
       // 添加地图类型控件
       this.bm.addControl(new BMap.MapTypeControl({
         mapTypes: [
-          // BMAP_NORMAL_MAP,
-          // BMAP_HYBRID_MAP
+          BMAP_NORMAL_MAP,
+          BMAP_HYBRID_MAP
         ]
       }))
     },

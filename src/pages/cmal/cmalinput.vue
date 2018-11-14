@@ -5,7 +5,7 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="http://192.168.0.237:2860/api/Worktable/Upload"
+                 action="uploadAction"
                  :headers="headers"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
@@ -48,11 +48,17 @@ export default {
   },
   data () {
     return {
+      uploadAction: '',
       processNum: 0,
       headers: {},
       fileList: [],
       isloading: false
     }
+  },
+  created () {
+    console.log('这是create 函数')
+    this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable' }
+    this.uploadAction = this.user.httppath + '/api/Worktable/Upload'
   },
   methods: {
     analysis () {
@@ -82,10 +88,9 @@ export default {
     },
     processbar () {
       console.log('函数 processbar 测试进度条某一刻的值')
-      var heads = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'worktable' } }
       this.$http.post(this.user.httppath + '/api/Worktable/TableName',
         {},
-        heads
+        { headers: this.headers }
       ).then((response) => {
         console.log('函数 processbar 响应')
         console.log(response)
@@ -131,10 +136,6 @@ export default {
       console.log('这是函数 handlePreview')
       console.log(file)
     }
-  },
-  created () {
-    console.log('这是create 函数')
-    this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable' }
   }
 }
 </script>

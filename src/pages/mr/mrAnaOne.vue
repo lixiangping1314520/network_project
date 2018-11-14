@@ -132,6 +132,22 @@ export default {
       data: []
     }
   },
+  created () {
+    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
+    this.$http.post(this.user.httppath + '/api/MRTest/MrInfo',
+      {},
+      headers
+    ).then((response) => {
+      console.log('created')
+      this.tableHead = response
+      console.log(response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  mounted () {
+    this.drawLine()
+  },
   methods: {
     counter () {
       this.drawX = []
@@ -166,7 +182,7 @@ export default {
       }
       console.log(mr)
       var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
-      this.$http.post('http://192.168.0.237:2860/api/MRTest/OneDAnalysis',
+      this.$http.post(this.user.httppath + '/api/MRTest/OneDAnalysis',
         mr,
         headers
       ).then((response) => {
@@ -303,34 +319,6 @@ export default {
         myChart.setOption(option, true)
       }
     }
-  },
-  created () {
-    console.log('这是 created 函数')
-    // console.log(this.users)
-    // var headers = {headers: {'projectname': this.prom.prom_pnm_pname, 'username': this.users.user.usernaername, 'filetype': 'm'}}
-    // console.log(this.users.user.usernaername)
-    // console.log(this.prom.prom_pnm_pname)
-    // var sStorage = sessionStorage.getItem('user')
-    console.log(sessionStorage)
-    console.log(sessionStorage.user)
-    console.log(JSON.parse(sessionStorage.user).username)
-    console.log(sessionStorage.user.username)
-    console.log(this.prom.prom_pname)
-    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
-    this.$http.post('http://192.168.0.237:2860/api/MRTest/MrInfo',
-      {},
-      headers
-    ).then((response) => {
-      console.log('created')
-      this.tableHead = response
-      // console.log(this.tableHead)
-      console.log(response)
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  mounted () {
-    this.drawLine()
   }
 }
 </script>

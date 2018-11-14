@@ -104,7 +104,7 @@ export default {
             message: '不存在该用户',
             type: 'warning'
           })
-        } else if(res === '密码不正确，请重新输入'){
+        } else if (res === '密码不正确，请重新输入') {
           this.$notify({
             title: '警告',
             message: '密码输入错误',

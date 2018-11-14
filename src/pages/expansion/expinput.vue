@@ -133,7 +133,6 @@ export default {
   },
   data () {
     return {
-      uploadAction: '',
       processNum: 0,
       headers: {},
       form: {
@@ -156,21 +155,6 @@ export default {
       resultTableName: [{ 'tableName': '扩容结果' }, { 'tableName': '扩容错误信息' }, { 'tableName': '错误信息' }],
       oneTable: []
     }
-  },
-  created () {
-    console.log('这是create 函数')
-    this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion' }
-    this.uploadAction = this.user.httppath + '/api/Expasion/Upload'
-    console.log(this.headers)
-    this.$http.post(this.user.httppath + '/api/Expasion/GetInTemplate',
-      {},
-      { headers: this.headers }
-    ).then((response) => {
-      console.log(response)
-      this.tables = response
-    }).catch((error) => {
-      console.log(error)
-    })
   },
   methods: {
     analysis () {
@@ -302,6 +286,20 @@ export default {
       }
       this.isShow = !this.isShow
     }
+  },
+  created () {
+    console.log('这是create 函数')
+    this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion' }
+    console.log(this.headers)
+    this.$http.post(this.user.httppath + '/api/Expasion/GetInTemplate',
+      {},
+      { headers: this.headers }
+    ).then((response) => {
+      console.log(response)
+      this.tables = response
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }
 </script>

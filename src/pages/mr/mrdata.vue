@@ -53,9 +53,63 @@ export default {
       user: (state) => state.user
     })
   },
+  watch: {
+    filterText (val) {
+      this.$refs.tree2.filter(val)
+    }
+  },
+  created () {
+    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
+    console.log('mrdata.vue create 函数')
+    console.log(this.prom.prom_pname)
+    console.log(this.user.user.username)
+    this.$http.post('http://192.168.0.237:2860/api/MRTest/GetTableName',
+      {},
+      headers
+    ).then((response) => {
+      console.log('created')
+      this.headerData2 = response
+      console.log(response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  methods: {
+    handleNodeClick (data) {
+      var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
+      console.log('这是 handleNodeClick 函数')
+      // var mr = ['MRO', 'MRE', 'MRS']
+      var mrname = data.id
+      this.$http.post('http://192.168.0.237:2860/api/MRTest/GetData',
+        { 'tableName': mrname },
+        headers
+      ).then((response) => {
+        console.log(response)
+        // this.data_list = JSON.parse(response)
+        this.data_list = response
+        this.total = this.data_list.length
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      console.log(value)
+      console.log(data)
+      return data.label.indexOf(value) !== -1
+    },
+    handleSizeChange (val) {
+      // 条数数目改变的时候发生
+      console.log(`当前页: ${val}`)
+    },
+    handleCurrentChange (currentPage) {
+      // 当前页面该改变时发生
+      this.currentPage = currentPage
+      console.log(`当前页: ${currentPage}`)
+    }
+  },
   data () {
     return {
-      headers: {},
       total: 0, // 默认数据总数
       pagesize: 10, // 每页的数据条数
       currentPage: 1, // 默认开始页面
@@ -84,60 +138,6 @@ export default {
         children: 'children',
         label: 'label'
       }
-    }
-  },
-  created () {
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
-    console.log('mrdata.vue create 函数')
-    console.log(this.prom.prom_pname)
-    console.log(this.user.user.username)
-    this.$http.post(this.user.httppath + '/MRTest/GetTableName',
-      {},
-      this.headers
-    ).then((response) => {
-      console.log('created')
-      this.headerData2 = response
-      console.log(response)
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  methods: {
-    handleNodeClick (data) {
-      console.log('这是 handleNodeClick 函数')
-      // var mr = ['MRO', 'MRE', 'MRS']
-      var mrname = data.id
-      this.$http.post(this.user.httppath + '/api/MRTest/GetData',
-        { 'tableName': mrname },
-        this.headers
-      ).then((response) => {
-        console.log(response)
-        // this.data_list = JSON.parse(response)
-        this.data_list = response
-        this.total = this.data_list.length
-      }).catch((error) => {
-        console.log(error)
-      })
-    },
-    filterNode (value, data) {
-      if (!value) return true
-      console.log(value)
-      console.log(data)
-      return data.label.indexOf(value) !== -1
-    },
-    handleSizeChange (val) {
-      // 条数数目改变的时候发生
-      console.log(`当前页: ${val}`)
-    },
-    handleCurrentChange (currentPage) {
-      // 当前页面该改变时发生
-      this.currentPage = currentPage
-      console.log(`当前页: ${currentPage}`)
-    }
-  },
-  watch: {
-    filterText (val) {
-      this.$refs.tree2.filter(val)
     }
   }
 }

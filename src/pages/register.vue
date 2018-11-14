@@ -122,9 +122,29 @@ export default {
         if (res === '已经存在该用户名') {
           return this.$message.warning('用户名已存在')
         }
+<<<<<<< .mine
         if (res === '该邮箱已被注册') {
           return this.$message.warning('该邮箱已被注册')
+
+
+
+
+
+
+
+=======
+        this.$message.warning('请输入正确的邮箱')
+        return false
+      },
+      ...mapActions(['register']),
+      // 注册
+      handregister () {
+        // 两次输入的密码是否一致
+        if (this.confirmPassword !== this.password) {
+          return this.$message.warning('两次输入的密码不一致')
+>>>>>>> .theirs
         }
+<<<<<<< .mine
         this.$message.success('注册成功')
         this.$router.push({ name: 'login' })
       })
@@ -134,6 +154,51 @@ export default {
       //   password: this.password
       // })
       // this.$router.push({name: 'login'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+        // 信息填写是否正确完善
+        if (!this.ueserNamePattern() || !this.emailPattern() || !this.passwordPattern()) {
+          return this.$message.warning('请正确填写注册信息')
+        }
+        // 所有信息填写正确后
+        // 将用户信息post至后台
+        let userMessage = {
+          username: this.username,
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+          email: this.email
+        }
+        this.$http.post('http://192.168.0.237:2860/api/WebUser/Register', userMessage).then(res => {
+          if (res !== '注册成功') {
+            return
+          }
+          this.$message.success('注册成功')
+          this.$router.push({name: 'login'})
+        })
+        // this.register({
+        //   username: this.username,
+        //   email: this.email,
+        //   password: this.password
+        // })
+        // this.$router.push({name: 'login'})
+      }
+>>>>>>> .theirs
     }
   }
 

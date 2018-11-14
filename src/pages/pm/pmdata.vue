@@ -86,10 +86,11 @@ export default {
         pmtype = 'PM_NBIoT'
       }
       console.log(this.pm.pm_typeNow)
-      var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': pmtype } }
+      var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': pmtype } }
+      // var mr = ['MRO', 'MRE', 'MRS']
       var mrname = data.id
       console.log(data.id)
-      this.$http.post(this.user.httppath + '/api/Pm/GetData',
+      this.$http.post('http://192.168.0.237:2860/api/Pm/GetData',
         { 'tableName': mrname },
         headers
       ).then((response) => {

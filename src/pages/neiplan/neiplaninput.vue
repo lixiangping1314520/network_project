@@ -7,14 +7,15 @@
       <br>
       <el-upload class="elmro"
                  ref="uploadUmts"
-                 action="uploadAciton"
+                 action="http://192.168.0.134:2861/api/NeiPlan/Upload"
                  :headers="head"
                  bind:on-preview="handlePreviewUmts"
                  :on-remove="handleRemoveUmts"
                  :file-list="fileListUmts"
                  :auto-upload="false"
                  :limit="1"
-                 :multiple="true">
+                 :multiple="true"
+                 k>
         <el-button slot="trigger"
                    size="small"
                    type="primary">3g 宏站文件</el-button>
@@ -23,7 +24,7 @@
       <br>
       <el-upload class="elmro"
                  ref="uploadLte"
-                 action="uploadAciton"
+                 action="http://192.168.0.134:2861/api/NeiPlan/Upload"
                  :headers="head"
                  :on-preview="handlePreviewLte"
                  :on-remove="handleRemoveLte"
@@ -38,7 +39,7 @@
       <br>
       <el-upload class="elmro"
                  ref="uploadCell"
-                 action="uploadAciton"
+                 action="http://192.168.0.134:2861/api/NeiPlan/Upload"
                  :headers="head"
                  :on-preview="handlePreviewCell"
                  :on-remove="handleRemoveCell"
@@ -159,7 +160,6 @@ export default {
   },
   data () {
     return {
-      uploadAciton: '',
       processNum: 0,
       head: {},
       fileListUmts: [],
@@ -183,10 +183,6 @@ export default {
       legitimat: true,
       isloading: false
     }
-  },
-  created () {
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
-    this.uploadAciton = this.user.httppath + '/api/NeiPlan/Upload'
   },
   methods: {
     analysis () {
@@ -212,7 +208,8 @@ export default {
       }
       this.isloading = true
       var heads = { headers: this.head }
-      this.$http.post(this.user.httppath + '/api/NeiPlan/Analysis',
+      // this.$http.post(this.user.httppath + 'http://192.168.0.134:2861/api/NeiPlan/AnaProcess',
+      this.$http.post('http://192.168.0.134:2861/api/NeiPlan/Analysis',
         { form: this.form },
         heads
       ).then((response) => {
@@ -289,6 +286,9 @@ export default {
       this.legitimat = true
       return true
     }
+  },
+  created () {
+    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
   }
 }
 </script>

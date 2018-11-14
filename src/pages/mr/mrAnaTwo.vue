@@ -163,24 +163,6 @@ export default {
       datap: []
     }
   },
-  created () {
-    console.log(this.users)
-    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
-    this.$http.post(this.user.httppath + '/api/MRTest/MrInfo',
-      {},
-      headers
-    ).then((response) => {
-      console.log('created')
-      this.tableHead = response
-      console.log(this.tableHead)
-      console.log(response)
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  mounted () {
-    this.drawLine()
-  },
   methods: {
     counter () {
       this.datap = []
@@ -228,7 +210,7 @@ export default {
       }
       console.log(mr)
       var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': sStorage.username, 'filetype': 'mr' } }
-      this.$http.post(this.user.httppath + '/api/MRTest/TwoDAnalysis',
+      this.$http.post('http://192.168.0.237:2861/api/MRTest/TwoDAnalysis',
         mr,
         headers
       ).then((response) => {
@@ -389,6 +371,32 @@ export default {
       //   }]
       // })
     }
+  },
+  created () {
+    // console.log('这是 created 函数')
+    // if (this.mr.mrhead.length === 0) {
+    //   this.setMrHeader()
+    // }
+    console.log(this.users)
+    // var sStorage = sessionStorage.getItem('user')
+    // console.log(sStorage)
+    // var headers = {headers: {'projectname': this.prom.prom_pname, 'username': sStorage.username, 'filetype': 'mr'}}
+    // var headers = {headers: {'projectname': this.prom.prom_pnm_pname, 'username': this.user.user.usernaername, 'filetype': 'mr'}}
+    var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
+    this.$http.post('http://192.168.0.237:2860/api/MRTest/MrInfo',
+      {},
+      headers
+    ).then((response) => {
+      console.log('created')
+      this.tableHead = response
+      console.log(this.tableHead)
+      console.log(response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
+  mounted () {
+    this.drawLine()
   }
 }
 </script>

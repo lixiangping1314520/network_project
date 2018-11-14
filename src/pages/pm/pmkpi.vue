@@ -127,7 +127,7 @@ export default {
       var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': mrtype } }
       // var mr = ['MRO', 'MRE', 'MRS']
       var params = { 'kpiName': row.kpiE, 'kpiType': this.kpiType }
-      this.$http.post(this.user.httppath + '/api/Pm/GetKpiData',
+      this.$http.post('http://192.168.0.237:2860/api/Pm/GetKpiData',
         params,
         headers
       ).then((response) => {

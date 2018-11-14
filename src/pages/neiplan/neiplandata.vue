@@ -66,20 +66,6 @@ export default {
       oneTable: []
     }
   },
-  created () {
-    console.log('neiplan crate 函数')
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' } }
-    this.$http.post(this.user.httppath + '/api/NeiPlan/Result',
-      {},
-      this.headers
-    ).then((response) => {
-      console.log('这是 create  success')
-      console.log(response)
-      this.resultTable = response
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
   methods: {
     output () {
       if (this.oneTable.length !== 0) {
@@ -95,6 +81,20 @@ export default {
         this.oneTable = this.resultTable['pci']
       }
     }
+  },
+  created () {
+    console.log('neiplan crate 函数')
+    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' } }
+    this.$http.post(this.user.httppath + '/api/NeiPlan/Result',
+      {},
+      this.headers
+    ).then((response) => {
+      console.log('这是 create  success')
+      console.log(response)
+      this.resultTable = response
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }
 </script>

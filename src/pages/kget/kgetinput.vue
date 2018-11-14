@@ -5,7 +5,7 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
+                 action="http://192.168.0.237:2860/api/Kget/Upload"
                  :headers="head"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
@@ -57,17 +57,11 @@ export default {
   },
   data () {
     return {
-      uploadAction: '',
       processNum: 0,
       head: {},
+      // head: {projectname: 'duhanxu', username: 'sua'},
       fileList: []
     }
-  },
-  created () {
-    console.log('这是create 函数')
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'kget' }
-    this.uploadAction = this.user.httppath + '/api/Kget/Upload'
-    console.log(this.head)
   },
   methods: {
     analysis () {
@@ -96,9 +90,10 @@ export default {
     },
     processbar () {
       console.log('函数 processbar 测试进度条某一刻的值')
+      var heads = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'kget' } }
       this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
         {},
-        { headers: this.head }
+        heads
       ).then((response) => {
         console.log('函数 processbar 响应')
         console.log(response)
@@ -111,9 +106,11 @@ export default {
     },
     dbInput () {
       console.log('dbInput')
+      var heads = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'kget' } }
+      console.log(heads)
       this.$http.post(this.user.httppath + '/api/Kget/KgetParse',
         {},
-        { headers: this.head }
+        heads
       ).then((response) => {
         console.log('函数 dbInput success')
         console.log(response)
@@ -154,7 +151,13 @@ export default {
       console.log('这是函数 handlePreview')
       console.log(file)
     }
+  },
+  created () {
+    console.log('这是create 函数')
+    this.head = { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'kget' }
+    console.log(this.head)
   }
+
 }
 </script>
 <style>

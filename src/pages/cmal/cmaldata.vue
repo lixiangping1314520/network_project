@@ -58,19 +58,6 @@ export default {
       tables: []
     }
   },
-  created () {
-    console.log('bulkcm crate 函数')
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable ' } }
-    this.$http.post(this.user.httppath + '/api/Worktable/TableName',
-      {},
-      this.headers
-    ).then((response) => {
-      console.log(response)
-      this.tables = response
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
   methods: {
     output () {
       if (this.result.length !== 0) {
@@ -94,6 +81,19 @@ export default {
         console.log(error)
       })
     }
+  },
+  created () {
+    console.log('bulkcm crate 函数')
+    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable ' } }
+    this.$http.post(this.user.httppath + '/api/Worktable/TableName',
+      {},
+      this.headers
+    ).then((response) => {
+      console.log(response)
+      this.tables = response
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }
 </script>

@@ -5,7 +5,7 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
+                 action="http://192.168.0.134:2861/api/Mr/Upload"
                  :on-preview="handlePreview"
                  :data="head"
                  :on-remove="handleRemove"
@@ -47,18 +47,31 @@ export default {
     return {
       processNum: 70,
       head: {},
-      fileList: [],
-      uploadAction: ''
+      // head: {projectname: 'duhanxu', username: 'sua'},
+      fileList: []
+      // fileList: [{
+      //   name: 'food.jpeg',
+      //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      // }, {
+      //   name: 'food2.jpeg',
+      //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      // }]
     }
   },
   created: function () {
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'pm' }
-    this.uploadAction = this.user.httppath + 'api/Pm/Upload'
+    // this.head.projectname = this.prom.prom_pname
+    // this.head.username = this.user.user.username
+    this.head.filetype = 'mr'
+    // console.log('这是created函数')
+    // console.log(this.prom.prom_pname)
+    // console.log(this.user.user.username)
+    // console.log(this.head)
   },
   methods: {
     analysis2 () {
       var id = setInterval(() => {
         var a = 100
+        // a = this.processbar()
         console.log('定时器响应中')
         if (a === 100) {
           clearInterval(id)
@@ -101,7 +114,7 @@ export default {
     },
     processbar (heads) {
       console.log('函数 processbar')
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
+      this.$http.post('http://localhost:2861/api/Mr/MrAnalysisProcess',
         {},
         heads
       ).then((response) => {
@@ -115,7 +128,7 @@ export default {
       })
     },
     dbInput (heads) {
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
+      this.$http.post('http://localhost:2861/api/Mr/MrAnalysisProcess',
         {},
         heads
       ).then((response) => {

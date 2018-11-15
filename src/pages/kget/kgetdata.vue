@@ -23,7 +23,7 @@
 
           <div class="pagination-wrapper">
             <el-pagination layout="prev, pager, next"
-                           :pager-count="4"
+                           :pager-count="5"
                            :total="pageNum"
                            @current-change="handleCurrentChange">
             </el-pagination>

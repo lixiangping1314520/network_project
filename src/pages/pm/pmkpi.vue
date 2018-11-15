@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       </br>
-      <el-radio-group @change="typeChange()"
+      <el-radio-group @change="typeChange"
                       v-model="kpiType"
                       size="mini">
         <el-radio-button :label="item.name"
@@ -20,12 +20,21 @@
         <el-aside width="300px">
           <el-table @row-click="handleRowChange"
                     :highlight-current-row="true"
-                    :data="pm.pm_kpivalues"
+                    :data="pmData"
                     style="width: 300px">
             <el-table-column prop="kpiE"
                              label="kpi 名称">
             </el-table-column>
           </el-table>
+
+          <div class="pagination-wrapper">
+            <el-pagination layout="prev, pager, next"
+                           :pager-count="5"
+                           :total="initPageNum"
+                           @current-change="handleCurrentChange">
+            </el-pagination>
+          </div>
+
         </el-aside>
         <el-main>
           <table border="0.5">
@@ -64,9 +73,15 @@ export default {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user,
-      pm: (state) => state.pm
+      pm: (state) => {
+        return state.pm
+      }
     }),
-    ...mapGetters(['getpm_kpitypety'])
+    ...mapGetters(['getpm_kpitypety']),
+    initPageNum () {
+      // this.pageNum = this.pm.pm_kpivalues.length
+      return this.pm.pm_kpivalues.length
+    }
   },
   data () {
     return {
@@ -90,11 +105,29 @@ export default {
         kpiE: 'RNC 连接建立成功次数',
         counter: 'pmRrcConnEstabAtt - pmRrcConnEstabAttReatt',
         isCalculate: false
-      }]
+      }],
+      pmData: [],
+      pageNum: 0
     }
+  },
+  mounted () {
+    this.typeChange()
   },
   methods: {
     ...mapMutations(['setpm_kpivules']),
+    // 点击跳转页面，显示对应的数据
+    handleCurrentChange (pageIndex) {
+      // pageIndex = pageIndex || 1
+      let pageSize = 10
+      this.pmData = this.pm.pm_kpivalues.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
+      console.log(this.pmData)
+    },
+    typeChange () {
+      console.log('typeChange 切换类型函数')
+      this.setpm_kpivules(this.kpiType)
+      this.handleCurrentChange(1)
+      console.log(this.kpiType)
+    },
     output () {
       // var du = [{name: '1', id: '2'},{name: '1', id: '2'}]
       // outputTable(du)
@@ -102,16 +135,11 @@ export default {
         outputTable(this.result)
       }
     },
-    typeChange () {
-      console.log('typeChange 切换类型函数')
-      this.setpm_kpivules(this.kpiType)
-      console.log(this.kpiType)
-    },
     handleSelectionChange () {
       console.log('handleSelectionChange 函数')
     },
     handleRowChange (row) {
-      console.log('这是 函数handleRowChange')
+      console.log(row)
       // console.log(row)
       this.rowDate = row
       var mrtype = ''

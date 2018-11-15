@@ -23,7 +23,7 @@
       </div>
       <button class="m-btn sub select-none" @click.prevent="handregister">注册</button>
       <p class="text-tips">已经有账号？</p>
-      <a href="/login" class="m-btn m-btn-text">直接登陆</a>
+      <a @click.prevent="goLogin" class="m-btn m-btn-text">直接登陆</a>
     </form>
   </div>
 </div>
@@ -41,6 +41,9 @@
       }
     },
     methods: {
+      goLogin () {
+        this.$router.replace({name: 'login'})
+      },
       // 判断用户名
       ueserNamePattern () {
         const pattern = /^[a-zA-Z\u4e00-\u9fa5]{2,10}$/
@@ -104,7 +107,7 @@
             return this.$message.warning('该邮箱已被注册')
           }
           this.$message.success('注册成功')
-          this.$router.push({name: 'login'})
+          this.$router.replace({name: 'login'})
         })
         // this.register({
         //   username: this.username,
@@ -126,7 +129,6 @@
     position: relative;
     display: block;
     margin-bottom: -1px;
-    background-color: #fff;
     margin-top: 15px; 
   }
   .fullscreen{

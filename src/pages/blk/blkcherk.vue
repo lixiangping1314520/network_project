@@ -59,6 +59,7 @@
     </el-aside>
     <el-main>
       <el-button type="primary"
+                 size="mini"
                  @click="addrow">新增</el-button>
       <el-form v-show="updatashow"
                ref="form"
@@ -95,8 +96,9 @@
       </el-form>
       <el-button type="primary"
                  :loading="isloading"
+                 size="mini"
                  @click="save">解析</el-button>
-
+      <export-table :tableData="oneTable"></export-table>
       <el-form :inline="true"
                class="demo-form-inline"
                style="margin-top: 10px">
@@ -137,12 +139,16 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {

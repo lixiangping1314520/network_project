@@ -73,8 +73,6 @@ export default {
   },
   methods: {
     handleNodeClick (data) {
-      console.log('这是 handleNodeClick 函数')
-      console.log('这是跳转函数')
       var pmtype = ''
       if (this.pm.pm_typeNow === '3g rbs') {
         pmtype = 'PM_3G_RBS'
@@ -88,7 +86,6 @@ export default {
       console.log(this.pm.pm_typeNow)
       var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': pmtype } }
       var mrname = data.id
-      console.log(data.id)
       this.$http.post(this.user.httppath + '/api/Pm/GetData',
         { 'tableName': mrname },
         headers
@@ -98,9 +95,6 @@ export default {
       }).catch((error) => {
         console.log(error)
       })
-      console.log(data)
-      console.log(data.label)
-      console.log(data.id)
     },
     filterNode (value, data) {
       if (!value) return true
@@ -130,5 +124,9 @@ export default {
 }
 .el-aside {
   color: #333;
+}
+.filter-tree{
+  height: 450px;
+  overflow-y: scroll; 
 }
 </style>

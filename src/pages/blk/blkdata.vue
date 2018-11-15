@@ -100,7 +100,7 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 11
+      let pageSize = 10
       this.currentPageData_1 = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_1 () {
@@ -110,7 +110,7 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_2 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 11
+      let pageSize = 10
       this.currentPageData_2 = this.result.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_2 () {

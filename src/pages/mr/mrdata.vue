@@ -91,7 +91,7 @@ export default {
     console.log('mrdata.vue create 函数')
     console.log(this.prom.prom_pname)
     console.log(this.user.user.username)
-    this.$http.post(this.user.httppath + '/MRTest/GetTableName',
+    this.$http.post(this.user.httppath + '/api/MRTest/GetTableName',
       {},
       this.headers
     ).then((response) => {

@@ -1,6 +1,6 @@
 <template>
 	<div class="output-table">
-		<el-button type="primary" size="mini" :loading="isloading" :disabled="isOutputTable" @click.prevent="outputTable">导出</el-button>
+		<el-button type="primary" size="mini" :disabled="isOutputTable" @click.prevent="outputTable">导出</el-button>
 	</div>
 </template>
 <script type="text/javascript">
@@ -51,6 +51,6 @@ export default {
 
 <style type="text/css">
 	.output-table{
-		float: right;
+		display: inline-block;
   }
 </style>

@@ -111,7 +111,7 @@ export default {
             type: 'warning'
           })
         } else {
-          console.log(res)
+          console.log(res.ticket)
           this.login({
             username: this.username,
             password: this.password,

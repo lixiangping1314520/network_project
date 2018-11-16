@@ -31,6 +31,7 @@
             <el-pagination layout="prev, pager, next"
                            :pager-count="5"
                            :total="initPageNum"
+                           :page-size="7"
                            @current-change="handleCurrentChange">
             </el-pagination>
           </div>
@@ -118,8 +119,8 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 10
-      this.pmData = this.pm.pm_kpivalues.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
+      let pageSize = 7
+      this.pmData = this.pm.pm_kpivalues.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
       console.log(this.pmData)
     },
     typeChange () {

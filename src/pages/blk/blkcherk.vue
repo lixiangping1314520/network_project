@@ -52,6 +52,7 @@
         <el-pagination layout="prev, pager, next"
                        :total="pageNum_1"
                        :pager-count="5"
+                       :page-size="7"
                        @current-change="handleCurrentChange_1">
         </el-pagination>
       </div>
@@ -130,6 +131,7 @@
         <el-pagination layout="prev, pager, next"
                        :total="pageNum_2"
                        :pager-count="5"
+                       :page-size="7"
                        @current-change="handleCurrentChange_2">
         </el-pagination>
       </div>
@@ -205,7 +207,7 @@ export default {
   methods: {// 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 11
+      let pageSize = 7
       this.currentPageData_1 = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_1 () {
@@ -213,8 +215,8 @@ export default {
     },
     handleCurrentChange_2 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 10
-      this.currentPageData_2 = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
+      let pageSize = 7
+      this.currentPageData_2 = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_2 () {
       this.pageNum_2 = this.oneTable.length

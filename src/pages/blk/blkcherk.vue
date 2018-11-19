@@ -52,6 +52,7 @@
         <el-pagination layout="prev, pager, next"
                        :total="pageNum_1"
                        :pager-count="5"
+                       :page-size="7"
                        @current-change="handleCurrentChange_1">
         </el-pagination>
       </div>
@@ -59,6 +60,7 @@
     </el-aside>
     <el-main>
       <el-button type="primary"
+                 size="mini"
                  @click="addrow">新增</el-button>
       <el-form v-show="updatashow"
                ref="form"
@@ -95,8 +97,9 @@
       </el-form>
       <el-button type="primary"
                  :loading="isloading"
+                 size="mini"
                  @click="save">解析</el-button>
-
+      <export-table :tableData="oneTable"></export-table>
       <el-form :inline="true"
                class="demo-form-inline"
                style="margin-top: 10px">
@@ -128,6 +131,7 @@
         <el-pagination layout="prev, pager, next"
                        :total="pageNum_2"
                        :pager-count="5"
+                       :page-size="7"
                        @current-change="handleCurrentChange_2">
         </el-pagination>
       </div>
@@ -137,12 +141,16 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -208,7 +216,7 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 11
+      let pageSize = 7
       this.currentPageData_1 = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_1 () {
@@ -216,8 +224,8 @@ export default {
     },
     handleCurrentChange_2 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 10
-      this.currentPageData_2 = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
+      let pageSize = 7
+      this.currentPageData_2 = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_2 () {
       this.pageNum_2 = this.oneTable.length

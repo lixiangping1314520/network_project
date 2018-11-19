@@ -4,115 +4,112 @@
     <div style="text-align: center">
       <img src="../assets/logo.png" alt="" class="logo">
     </div>
-    <p class="text-tips-header">你好，欢迎注册</p>
+    <p class="text-tips-header">你好，欢迎修改密码</p>
     <form action="" class="login-form">
       <div class="m-list-group">
-        <div class="m-list-group-item">
+        <!-- <div class="m-list-group-item">
           <label for="username" class="m-label">用户名称</label><input type="text" placeholder="登录用户名,2-10个字符" class="m-input" v-model="username" @blur="ueserNamePattern">
-        </div>
-        <div class="m-list-group-item">
+        </div> -->
+        <!-- <div class="m-list-group-item">
           <label for="username" class="m-label">邮&nbsp;&nbsp;&nbsp;&nbsp;箱</label><input type="email" placeholder="E-mail" class="m-input" v-model="email" @blur="emailPattern">
+        </div> -->
+        <div class="m-list-group-item">
+          <label for="oldPassWord" class="m-label">原密码</label><input type="password" placeholder="只能输入6-20个字母、数字、下划线 " class="m-input" v-model="oldPassword" @blur="passwordPattern(oldPassword,$event)">
         </div>
         <div class="m-list-group-item">
-          <label for="username" class="m-label">密&nbsp;&nbsp;&nbsp;&nbsp;码</label><input type="password" placeholder="必须包含字母、数字,长度不小于8位" class="m-input" v-model="password" @blur="passwordPattern">
+          <label for="newPassword" class="m-label">新密码</label><input type="password" placeholder="只能输入6-20个字母、数字、下划线 " class="m-input" v-model="newPassword" @blur="passwordPattern(newPassword,$event)">
         </div>
         <div class="m-list-group-item">
-          <label for="username" class="m-label">确认密码</label><input type="password" placeholder="请确认密码" class="m-input" v-model="confirmPassword" @blur="passwordPattern">
+          <label for="confirmPassword" class="m-label">确认密码</label><input type="password" placeholder="请确认密码" class="m-input" v-model="confirmPassword" @blur="passwordPattern(confirmPassword,$event)">
         </div>
         
       </div>
-      <button class="m-btn sub select-none" @click.prevent="handregister">注册</button>
-      <p class="text-tips">已经有账号？</p>
-      <a @click.prevent="goLogin" class="m-btn m-btn-text">直接登陆</a>
+      <button class="m-btn sub select-none" @click.prevent="handResetPassWord">确认修改</button>
+      <p class="text-tips">放弃修改？</p>
+      <a @click.prevent="discardChange" class="m-btn m-btn-text">确认放弃修改？</a>
     </form>
   </div>
 </div>
 </template>
 <script>
-  import {mapState, mapActions} from 'vuex'
+  // import {mapActions} from 'vuex'
   export default {
     name: 'login',
-    computed: {
-      ...mapState({
-        prom: (state) => state.prom,
-        user: (state) => state.user
-      })
-    },
     data () {
       return {
         username: '',
         email: '',
-        password: '',
+        oldPassword: '',
+        newPassword: '',
         confirmPassword: ''
       }
     },
     methods: {
-      goLogin () {
-        this.$router.replace({name: 'login'})
+      discardChange () {
+        // 返回上一个页面
+        window.history.back(-1)
       },
       // 判断用户名
-      ueserNamePattern () {
-        const pattern = /^[a-zA-Z\u4e00-\u9fa5]{2,10}$/
-        if (pattern.test(this.username) || !this.username) {
-          return true
-        } else if (!this.username) {
-          return false
-        }
-        this.$message.warning('用户名为2-10个字符')
-        return false
-      },
+      // ueserNamePattern () {
+      //   const pattern = /^[a-zA-Z\u4e00-\u9fa5]{2,10}$/
+      //   if (pattern.test(this.username) || !this.username) {
+      //     return true
+      //   } else if (!this.username) {
+      //     return false
+      //   }
+      //   this.$message.warning('用户名为2-10个字符')
+      //   return false
+      // },
       // 判断密码
-      passwordPattern () {
-        const pattern = /[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/
-        if (pattern.test(this.password) || !this.password) {
+      passwordPattern (password, $event) {
+        const pattern = /^(\w){6,20}$/
+        if (pattern.test(password) || !password) {
           return true
-        } else if (!this.password) {
+        } else if (!password) {
           return false
         }
-        this.$message.warning('密码必须为字母加数字且长度不小于8位')
+        this.$notify.error({
+          title: '密码输入错误',
+          message: '只能输入6-20个字母、数字、下划线  '
+        })
+        $event.target.value = ''
         return false
       },
-      // 判断邮箱格式
-      emailPattern () {
-        const pattern = /^([a-z0-9_.-]+)@([\da-z.-]+)\.([a-z.]{2,6})$/
-        if (pattern.test(this.email)) {
-          return true
-        } else if (!this.email) {
-          return false
-        }
-        this.$message.warning('请输入正确的邮箱')
-        return false
-      },
-      ...mapActions(['register']),
-      // 注册
-      handregister () {
-        console.log(1)
+      // 修改密码
+      handResetPassWord () {
         // 两次输入的密码是否一致
-        if (this.confirmPassword !== this.password) {
-          return this.$message.warning('两次输入的密码不一致')
+        if (this.confirmPassword !== this.newPassword) {
+          return this.$notify.error({
+            title: '密码输入错误',
+            message: '两次输入的密码不一致'
+          })
         }
         // 信息填写是否正确完善
-        if (!this.ueserNamePattern() || !this.emailPattern() || !this.passwordPattern()) {
-          return this.$message.warning('请完整正确填写注册信息')
+        if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
+          return this.$notify.error({
+            title: '输入信息不能为空',
+            message: '请完整填写相关内容 '
+          })
         }
         // 所有信息填写正确后
         // 将用户信息post至后台
         let userMessage = {
-          username: this.username,
-          password: this.password,
-          confirmPassword: this.confirmPassword,
-          email: this.email
+          oldpassword: this.oldPassword,
+          password: this.newPassword,
+          confirmpassword: this.confirmPassword
         }
-        console.log(1)
-        this.$http.post(this.user.httppath + '/api/WebUser/Register', userMessage).then(res => {
+        this.$http.post('http://192.168.0.237:2860/api/WebUser/Register', userMessage).then(res => {
           console.log(res)
           if (res === '已经存在该用户名') {
-            return this.$message.warning('用户名已存在')
+            return this.$notify.error({
+              title: '修改密码失败',
+              message: '旧密码输入错误 '
+            })
           }
-          if (res === '该邮箱已被注册') {
-            return this.$message.warning('该邮箱已被注册')
-          }
-          this.$message.success('注册成功')
+          this.$notify.success({
+            title: '修改成功',
+            message: '密码修改成功 '
+          })
           this.$router.replace({name: 'login'})
         })
         // this.register({
@@ -123,9 +120,9 @@
         // this.$router.push({name: 'login'})
       }
     }
-
   }
 </script>
+
 <style type="text/css">
   .m-list-group{
     padding: 0;

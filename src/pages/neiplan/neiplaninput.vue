@@ -144,6 +144,7 @@
       <br>
       <el-button type="primary"
                  :loading="isloading"
+                 size="mini"
                  @click="analysis">解析</el-button>
       <h1>解析进度</h1>
       <el-progress class="aprogress"

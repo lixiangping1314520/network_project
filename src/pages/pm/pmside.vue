@@ -1,8 +1,7 @@
 <template>
   <el-container>
-    <el-aside width="200px">
+    <el-aside width="200px" style="overflow:hidden">
       <el-select v-model="typevalue"
-                 size="small"
                  @change="mrtype()"
                  placeholder="mr 类型">
         <el-option v-for="item in typedate"

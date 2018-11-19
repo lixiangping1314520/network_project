@@ -15,12 +15,12 @@
                  :multiple="true"
                  accept=".zip, .xml, .gz">
         <el-button slot="trigger"
-                   size="small"
+                   size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
              class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="small"
+                   size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
@@ -28,7 +28,9 @@
     <el-aside>
       <br>
       <br>
-      <button @click="analysis">解析</button>
+      <el-button @click="analysis"
+                 size="mini"
+                 type="primary">解析</el-button>
       <h1>解析进度</h1>
       <el-progress class="aprogress"
                    :percentage=this.processNum></el-progress>

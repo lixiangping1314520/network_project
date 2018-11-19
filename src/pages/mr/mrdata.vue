@@ -14,6 +14,8 @@
                  @node-click="handleNodeClick">
           ref="tree2">
         </el-tree>
+
+        <export-table :tableData="data_list"></export-table>
       </el-aside>
       <el-container>
         <el-main>
@@ -30,12 +32,13 @@
           </el-table>
         </el-main>
         <el-footer>
-          <diV style="text-align: center">
+          <diV style="text-align: left">
             <el-pagination @size-change="handleSizeChange"
                            @current-change="handleCurrentChange"
                            :current-page.sync="currentPage"
                            :page-size="pagesize"
                            layout="prev, pager, next, jumper"
+                           :pager-count="5"
                            :total="total">
             </el-pagination>
           </div>
@@ -46,12 +49,16 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -162,5 +169,10 @@ export default {
 
 .el-aside {
   color: #333;
+}
+
+.filter-tree{
+  height: 400px;
+  overflow-y: scroll; 
 }
 </style>

@@ -51,6 +51,7 @@
     </el-aside>
     <el-main>
       <el-button type="primary"
+                 size="mini"
                  @click="addrow">新增</el-button>
       <el-form v-show="false"
                ref="form"
@@ -73,8 +74,9 @@
       </el-form>
       <el-button type="primary"
                  :loading="isloading"
+                 size="mini"
                  @click="save">解析</el-button>
-
+      <export-table :tableData="oneTable"></export-table>
       <!-- <el-table  @row-click="handleRowChange" :highlight-current-row="true" :data="resultTableName">         
       <el-table-column 
         :show-overflow-tooltip="true"
@@ -123,12 +125,16 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {

@@ -30,10 +30,10 @@
                  @click="addrow">添加</el-button>
       <el-table border
                 :highlight-current-row="true"
-                :data="tables"
+                :data="tablesData"
                 style="width: 500px">
         <el-table-column :label="key"
-                         v-for="(date, key) in tables[0]"
+                         v-for="(date, key) in tablesData[0]"
                          :key="key"
                          :show-overflow-tooltip="true">
           <template slot-scope="scope">
@@ -54,6 +54,15 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="pagination-wrapper">
+        <el-pagination layout="prev, pager, next"
+                       :total="pageNum"
+                       :page-size="6"
+                       @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
+
     </el-aside>
     <el-main>
       <br>
@@ -98,7 +107,8 @@
                  :loading="isloading"
                  size="mini"
                  @click="analysis">解析</el-button>
-      <el-table width="400px"
+      <export-table :tableData="oneTable"></export-table>
+      <!-- <el-table width="400px"
                 @row-click="handleRowChange"
                 :highlight-current-row="true"
                 :data="resultTableName">
@@ -106,12 +116,28 @@
                          prop="tableName"
                          label="表名称">
         </el-table-column>
-      </el-table>
+      </el-table> -->
+
+      <el-form :inline="true"
+               class="demo-form-inline"
+               style="margin-top: 10px">
+        <el-form-item style="margin-bottom: 10px">
+          <el-select v-model="tableName"
+                     placeholder="表名称"
+                     @change="changeTableName">
+            <el-option v-for="item in resultTableName"
+                       :key="item.tableName"
+                       :label="item.tableName"
+                       :value="item.tableName">{{item.tableName}}</el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
       <el-table width="400px"
                 :highlight-current-row="true"
-                :data="oneTable">
+                :data="oneTableData">
         <el-table-column :label="key"
-                         v-for="(date, key) in oneTable[0]"
+                         v-for="(date, key) in oneTableData[0]"
                          :key="key"
                          :show-overflow-tooltip="true">
           <template slot-scope="scope">
@@ -119,17 +145,30 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="pagination-wrapper">
+        <el-pagination layout="prev, pager, next"
+                       :total="pageNum_1"
+                       :page-size="6"
+                       @current-change="handleCurrentChange_1">
+        </el-pagination>
+      </div>
+
     </el-main>
   </el-container>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -152,10 +191,15 @@ export default {
       fileList: [],
       selectrow: -1,
       tables: [],
+      tablesData: [],
+      pageNum: 0,
       isloading: false,
       resultTable: {},
       resultTableName: [{ 'tableName': '扩容结果' }, { 'tableName': '扩容错误信息' }, { 'tableName': '错误信息' }],
-      oneTable: []
+      oneTable: [],
+      tableName: '',
+      oneTableData: [],
+      pageNum_1: 0
     }
   },
   created () {
@@ -178,12 +222,34 @@ export default {
     ).then((response) => {
       console.log(response)
       this.tables = response
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange(1)
+      this.initPageNum()
     }).catch((error) => {
       console.log(error)
     })
   },
   methods: {
     ...mapMutations(['setpname_prom']),
+    // 点击跳转页面，显示对应的数据
+    handleCurrentChange (pageIndex) {
+      // pageIndex = pageIndex || 1
+      let pageSize = 6
+      this.tablesData = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
+    },
+    initPageNum () {
+      this.pageNum = this.tables.length
+    },
+
+    // 点击跳转页面，显示对应的数据
+    handleCurrentChange_1 (pageIndex) {
+      // pageIndex = pageIndex || 1
+      let pageSize = 6
+      this.oneTableData = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
+    },
+    initPageNum_1 () {
+      this.pageNum_1 = this.oneTable.length
+    },
     analysis () {
       // console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {
@@ -230,19 +296,35 @@ export default {
       this.tables.splice(index, 1)
       console.log(index, row)
     },
-    handleRowChange (row) {
-      console.log(row)
+    // handleRowChange (row) {
+    //   console.log(row)
+    //   if (this.resultTable === '') {
+    //     return
+    //   }
+    //   if (row['tableName'] === '扩容结果') {
+    //     this.oneTable = this.resultTable['扩容结果']
+    //   } else if (row['tableName'] === '扩容错误信息') {
+    //     this.oneTable = this.resultTable['扩容错误信息']
+    //   } else {
+    //     this.oneTable = this.resultTable['错误信息']
+    //   }
+    //   console.log(this.oneTable)
+    // },
+    changeTableName () {
+      console.log(this.tableName)
       if (this.resultTable === '') {
         return
       }
-      if (row['tableName'] === '扩容结果') {
+      if (this.tableName === '扩容结果') {
         this.oneTable = this.resultTable['扩容结果']
-      } else if (row['tableName'] === '扩容错误信息') {
+      } else if (this.tableName === '扩容错误信息') {
         this.oneTable = this.resultTable['扩容错误信息']
       } else {
         this.oneTable = this.resultTable['错误信息']
       }
-      console.log(this.oneTable)
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange_1(1)
+      this.initPageNum_1()
     },
     dbInput () {
       console.log('dbInput')

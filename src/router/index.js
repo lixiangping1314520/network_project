@@ -232,6 +232,7 @@ export default new Router({
     // pages
     { path: '/home-login', name: 'p-login', component: page('home-login') },
     { path: '/register', name: 'p-register', component: page('register') },
+    { path: '/resetPassWord', name: 'p-resetPassWord', component: page('resetPassWord') },
     { path: '/keyboard', name: 'p-keyboard', component: page('c-keyboard') },
     { path: '*', redirect: { name: '404' } }
   ]

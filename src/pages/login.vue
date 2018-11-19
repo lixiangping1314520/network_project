@@ -32,7 +32,7 @@
         </div>
       </form>
       <p class="text-tips">没有有账号？</p>
-      <a href="/register"
+      <a @click.prevent="goRegister"
          class="m-btn m-btn-text">快速注册</a>
       <!-- <p class="text-tips">
       <i class="fa fa-meetup" style="color: #29ABE2"></i>&nbsp;
@@ -128,6 +128,9 @@ export default {
           this.$router.push({ name: 'home' })
         }
       })
+    },
+    goRegister () {
+      this.$router.push({ name: 'p-register' })
     }
   }
 }

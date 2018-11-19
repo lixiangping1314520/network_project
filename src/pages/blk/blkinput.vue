@@ -133,8 +133,8 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 12
-      this.currentPageData = this.needTabel.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
+      let pageSize = 10
+      this.currentPageData = this.needTabel.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum () {
       this.pageNum = this.needTabel.length

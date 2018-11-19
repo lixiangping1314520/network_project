@@ -136,7 +136,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -177,6 +177,13 @@ export default {
   },
   created () {
     console.log('bulkcm crate 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
     this.$http.post(this.user.httppath + '/api/Bulkcm/CheckCfg',
       {},
@@ -196,7 +203,9 @@ export default {
     console.log(document.getElementsByClassName('el-container is-vertical')[0].offsetHeight)
     this.height = document.getElementsByClassName('el-container is-vertical')[0].offsetHeight - 100 + 'px'
   },
-  methods: {// 点击跳转页面，显示对应的数据
+  methods: {
+    ...mapMutations(['setpname_prom']),
+    // 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
       let pageSize = 11

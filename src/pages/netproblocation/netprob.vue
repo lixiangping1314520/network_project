@@ -39,7 +39,7 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -62,7 +62,18 @@ export default {
       }
     }
   },
+  created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
+  },
   methods: {
+    ...mapMutations(['setpname_prom']),
     handleClick (tab, event) {
       console.log('这是 handleClick 函数')
       var index = tab.$vnode.child.index
@@ -117,9 +128,6 @@ export default {
       this.legitimat = true
       return true
     }
-  },
-  created () {
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
   }
 }
 </script>

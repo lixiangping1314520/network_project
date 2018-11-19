@@ -93,8 +93,17 @@ export default {
       }]
     }
   },
+  created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+  },
   methods: {
-    ...mapMutations(['setpm_kpivules']),
+    ...mapMutations(['setpm_kpivules', 'setpname_prom']),
     output () {
       // var du = [{name: '1', id: '2'},{name: '1', id: '2'}]
       // outputTable(du)

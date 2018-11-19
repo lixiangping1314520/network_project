@@ -5,14 +5,15 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
-                 :headers="head"
+                 :action="uploadAction"
+                 :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
                  :auto-upload="false"
                  :limit="1"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".zip, .xml, .gz">
         <el-button slot="trigger"
                    size="small"
                    type="primary">选取文件</el-button>
@@ -47,7 +48,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -60,16 +61,26 @@ export default {
       uploadAction: '',
       processNum: 0,
       head: {},
+      uploadHead: {},
       fileList: []
     }
   },
   created () {
     console.log('这是create 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'kget' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'kget', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAction = this.user.httppath + '/api/Kget/Upload'
     console.log(this.head)
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis () {
       console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {

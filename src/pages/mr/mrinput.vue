@@ -5,19 +5,20 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="http://192.168.0.237:2860/api/Mr/Upload"
-                 :headers="head"
+                 :action="uploaadAction"
+                 :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
                  :auto-upload="false"
                  :limit="1000"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".zip, .xml">
         <el-button slot="trigger"
                    size="small"
                    type="primary">选取文件</el-button>
         <div slot="tip"
-             class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
+             class="el-upload__tip">支持zip,xml格式的文件</div>
         <el-button style="margin-left: 10px;"
                    size="small"
                    type="success"
@@ -27,15 +28,18 @@
     <el-aside>
       <br>
       <br>
-      <button @click="analysis">解析</button>
-      <h1>解析进度</h1>
-      <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+      <el-button type="primary"
+                 :loading="isloading"
+                 size="mini"
+                 @click="analysis">解析</el-button>
+      <!-- <h1>解析进度</h1> -->
+      <!-- <el-progress class="aprogress"
+                   :percentage=this.processNum></el-progress> -->
     </el-aside>
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -48,18 +52,30 @@ export default {
       uploaadAction: '',
       processNum: 0,
       head: {},
-      fileList: []
+      uploadHead: {},
+      fileList: [],
+      isloading: false
     }
   },
   created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     console.log('这是create 函数')
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploaadAction = this.user.httppath + '/api/Mr/Upload'
+    console.log(this.uploaadAction)
     console.log(this.head)
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis () {
-      console.log(' analysis 测试进度条比变化')
+      // console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {
         this.$notify({
           title: '警告',
@@ -69,18 +85,6 @@ export default {
         return
       }
       this.dbInput()
-      var id = setInterval(() => {
-        // var a = this.processbar(heads)
-        console.log('2s 后执行')
-        // a = a + 20
-        this.i = this.processbar()
-        console.log(this.processNum)
-        //  console.log('定时器响应中')
-        if (this.processNum === 100) {
-          clearInterval(id)
-          console.log('定时器关闭')
-        }
-      }, 2000)
     },
     send () {
       console.log('这是send 函数')
@@ -102,13 +106,26 @@ export default {
     },
     dbInput () {
       console.log('dbInput')
+      this.isloading = true
       this.$http.post(this.user.httppath + '/api/Mr/Mranalysis',
         {},
         { headers: this.head }
       ).then((response) => {
+        this.isloading = false
+        this.$notify({
+          title: '成功',
+          message: '解析成功',
+          type: 'success'
+        })
         console.log('函数 dbInput success')
         console.log(response)
       }).catch((error) => {
+        this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: '解析失败' + error,
+          type: 'warning'
+        })
         console.log('函数 dbInput error')
         console.log(error)
       })

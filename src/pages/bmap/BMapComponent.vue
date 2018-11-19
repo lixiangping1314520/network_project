@@ -36,6 +36,7 @@
 
 <script type="text/javascript">
 import BMap from 'BMap'
+import { mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -45,7 +46,22 @@ export default {
       bm: null
     }
   },
+  created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.initMap()
+    })
+  },
   methods: {
+    ...mapMutations(['setpname_prom']),
     // 点击打开测距功能
     rangeBtn () {
       this.myDis.open()
@@ -496,11 +512,6 @@ export default {
     isCell () {
       return this.filterPoints.length === 0
     }
-  },
-  mounted () {
-    this.$nextTick(() => {
-      this.initMap()
-    })
   }
 }
 </script>

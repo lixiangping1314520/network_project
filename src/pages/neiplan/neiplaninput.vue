@@ -8,13 +8,14 @@
       <el-upload class="elmro"
                  ref="uploadUmts"
                  action="uploadAciton"
-                 :headers="head"
+                 :headers="uploadHead"
                  bind:on-preview="handlePreviewUmts"
                  :on-remove="handleRemoveUmts"
                  :file-list="fileListUmts"
                  :auto-upload="false"
                  :limit="1"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".txt">
         <el-button slot="trigger"
                    size="small"
                    type="primary">3g 宏站文件</el-button>
@@ -24,13 +25,14 @@
       <el-upload class="elmro"
                  ref="uploadLte"
                  action="uploadAciton"
-                 :headers="head"
+                 :headers="uploadHead"
                  :on-preview="handlePreviewLte"
                  :on-remove="handleRemoveLte"
                  :file-list="fileListLte"
                  :auto-upload="false"
                  :limit="1"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".txt">
         <el-button slot="trigger"
                    size="small"
                    type="primary">4g 宏站文件</el-button>
@@ -39,13 +41,14 @@
       <el-upload class="elmro"
                  ref="uploadCell"
                  action="uploadAciton"
-                 :headers="head"
+                 :headers="uploadHead"
                  :on-preview="handlePreviewCell"
                  :on-remove="handleRemoveCell"
                  :file-list="fileListCell"
                  :auto-upload="false"
                  :limit="1"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".txt">
         <el-button slot="trigger"
                    size="small"
                    type="primary">规划小区文件</el-button>
@@ -149,7 +152,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -162,6 +165,7 @@ export default {
       uploadAciton: '',
       processNum: 0,
       head: {},
+      uploadHead: {},
       fileListUmts: [],
       fileListLte: [],
       fileListCell: [],
@@ -185,10 +189,19 @@ export default {
     }
   },
   created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAciton = this.user.httppath + '/api/NeiPlan/Upload'
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis () {
       if (this.prom.prom_pname === 'default') {
         this.$notify({

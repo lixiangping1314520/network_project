@@ -5,8 +5,8 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="http://192.168.0.237:2860/api/Expasion/Upload"
-                 :headers="headers"
+                 action="uploadAction"
+                 :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :on-success="success"
@@ -123,7 +123,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -136,6 +136,7 @@ export default {
       uploadAction: '',
       processNum: 0,
       headers: {},
+      uploadHead: {},
       form: {
         '等待扩容小区': '',
         '站号': '',
@@ -159,7 +160,16 @@ export default {
   },
   created () {
     console.log('这是create 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+
     this.uploadAction = this.user.httppath + '/api/Expasion/Upload'
     console.log(this.headers)
     this.$http.post(this.user.httppath + '/api/Expasion/GetInTemplate',
@@ -173,6 +183,7 @@ export default {
     })
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis () {
       // console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {

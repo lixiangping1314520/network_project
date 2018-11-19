@@ -34,6 +34,7 @@ import MBox from '@/m/box'
 import MBackTop from '@/m/back-top'
 import MLoader from '@/m/loader'
 import MContainer from '@/m/container'
+// import saveState from './basic/saveState.js'
 
 Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
@@ -53,6 +54,7 @@ Vue.use(MBox)
 Vue.use(MBackTop)
 Vue.use(MLoader)
 Vue.use(MContainer)
+// Vue.use(saveState)
 
 var whiteList = ['demo', 'p-login', 'login', 'p-register']
 router.beforeEach((to, from, next) => {
@@ -89,6 +91,7 @@ Axios.interceptors.request.use(config => {
 Axios.interceptors.response.use(
   res => {
     // console.log(res)
+    console.log(res)
     if (res.status === 401) {
       app &&
         app.$message({

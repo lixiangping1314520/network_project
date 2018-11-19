@@ -5,7 +5,7 @@ import cnode from './cnode'
 import user from './user'
 import prom from './prom'
 import pm from './pm'
-import mr from './mr'
+// import mr from './mr'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,6 @@ export default new Vuex.Store({
     cnode,
     user,
     prom,
-    pm,
-    mr
+    pm
   }
 })

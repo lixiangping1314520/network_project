@@ -45,7 +45,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -87,8 +87,16 @@ export default {
     }
   },
   created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
     console.log('mrdata.vue create 函数')
+    // console.log(localStorage.getItem('pname'))
     console.log(this.prom.prom_pname)
     console.log(this.user.user.username)
     this.$http.post(this.user.httppath + '/api/MRTest/GetTableName',
@@ -103,6 +111,7 @@ export default {
     })
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     handleNodeClick (data) {
       console.log('这是 handleNodeClick 函数')
       // var mr = ['MRO', 'MRE', 'MRS']

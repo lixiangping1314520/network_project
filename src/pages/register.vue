@@ -29,9 +29,15 @@
 </div>
 </template>
 <script>
-  import {mapActions} from 'vuex'
+  import {mapState, mapActions} from 'vuex'
   export default {
     name: 'login',
+    computed: {
+      ...mapState({
+        prom: (state) => state.prom,
+        user: (state) => state.user
+      })
+    },
     data () {
       return {
         username: '',
@@ -95,7 +101,7 @@
           email: this.email
         }
         console.log(1)
-        this.$http.post('http://192.168.0.237:2860/api/WebUser/Register', userMessage).then(res => {
+        this.$http.post(this.user.httppath + '/api/WebUser/Register', userMessage).then(res => {
           console.log(res)
           if (res === '已经存在该用户名') {
             return this.$message.warning('用户名已存在')

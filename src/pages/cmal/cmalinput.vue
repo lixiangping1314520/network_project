@@ -6,7 +6,7 @@
       <el-upload class="elmro"
                  ref="upload"
                  action="uploadAction"
-                 :headers="headers"
+                 :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
@@ -38,7 +38,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -51,16 +51,26 @@ export default {
       uploadAction: '',
       processNum: 0,
       headers: {},
+      uploadHead: {},
       fileList: [],
       isloading: false
     }
   },
   created () {
     console.log('这是create 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.headers = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'worktable', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAction = this.user.httppath + '/api/Worktable/Upload'
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis () {
       console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {

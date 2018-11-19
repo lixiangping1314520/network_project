@@ -18,7 +18,7 @@ const expansion = name => () => import('@/pages/expansion/' + name)
 const prob = name => () => import('@/pages/netproblocation/' + name)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '',

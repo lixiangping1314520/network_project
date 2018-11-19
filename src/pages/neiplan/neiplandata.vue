@@ -42,7 +42,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import outputTable from '../../basic/outputTable.js'
 export default {
   computed: {
@@ -68,6 +68,13 @@ export default {
   },
   created () {
     console.log('neiplan crate 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' } }
     this.$http.post(this.user.httppath + '/api/NeiPlan/Result',
       {},
@@ -81,6 +88,7 @@ export default {
     })
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     output () {
       if (this.oneTable.length !== 0) {
         outputTable(this.oneTable)

@@ -5,14 +5,15 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
-                 :headers="head"
+                 :action="uploadAction"
+                 :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
                  :auto-upload="false"
                  :limit="1000"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".zip, .xml, .gz">
         <el-button slot="trigger"
                    size="small"
                    type="primary">选取文件</el-button>
@@ -23,49 +24,48 @@
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-      <div class="table-wrapper">
-        <el-table id="du"
-                ref="multipleTable"
+
+      <el-table ref="multipleTable"
                 :data="currentPageData"
                 tooltip-effect="dark"
                 style="width: 100%"
                 @selection-change="handleSelectionChange">
-          <el-table-column type="selection"
-                           width="30">
-          </el-table-column>
-          </el-table-column>
-          <el-table-column prop="title"
-                           label="表名"
-                           width="470"
-                           :show-overflow-tooltip="true">
-            <template slot-scope="scope">{{ scope.row.title }}</template>
-          </el-table-column>
-        </el-table>
+        <el-table-column type="selection"
+                         width="30">
+        </el-table-column>
+        </el-table-column>
+        <el-table-column prop="title"
+                         label="表名"
+                         width="470"
+                         :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{ scope.row.title }}</template>
+        </el-table-column>
+      </el-table>
       </div>
 
       <div class="pagination-wrapper">
-        <el-pagination
-          layout="prev, pager, next"
-          :total="pageNum"
-          @current-change="handleCurrentChange">
+        <el-pagination layout="prev, pager, next"
+                       :total="pageNum"
+                       @current-change="handleCurrentChange">
         </el-pagination>
       </div>
-      
+
     </el-aside>
     <el-main>
       <br>
       <br>
       <el-button type="primary"
                  :loading="isloading"
+                 size="mini"
                  @click="analysis">解析</el-button>
-      <h1>解析进度</h1>
-      <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+      <!-- <h1>解析进度</h1> -->
+      <!-- <el-progress class="aprogress"
+                   :percentage=this.processNum></el-progress> -->
     </el-main>
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -78,6 +78,7 @@ export default {
       uploadAction: '',
       processNum: 0,
       head: {},
+      uploadHead: {},
       needTabel: [],
       table: [],
       multipleSelection: [],
@@ -93,7 +94,15 @@ export default {
   created () {
     console.log('这是create blkinput 函数')
     console.log('created first')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAction = this.user.httppath + '/api/Bulkcm/Upload'
     var heads = { headers: this.head }
     this.$http.post(this.user.httppath + '/api/Bulkcm/GetTables',
@@ -115,12 +124,12 @@ export default {
     })
   },
   mounted () {
-    // this.toggleSelection(this.table)
     setTimeout(() => {
       this.toggleSelection(this.table)
     }, 1000)
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
       // pageIndex = pageIndex || 1
@@ -141,71 +150,38 @@ export default {
         return
       }
       this.dbInput()
-      // var id = setInterval(() => {
-      //   console.log('2s 后执行')
-      //   this.i = this.processbar()
-      //   console.log(this.processNum)
-      //   if (this.processNum === 100) {
-      //     clearInterval(id)
-      //     console.log('定时器关闭')
-      //   }
-      // }, 2000)
     },
     send () {
       console.log('这是send 函数')
     },
-    processbar () {
-      console.log('函数 processbar 测试进度条某一刻的值')
-
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
-        {},
-        { headers: this.head }
-      ).then((response) => {
-        console.log('函数 processbar 响应')
-        console.log(response)
-        return response
-      }).catch((error) => {
-        console.log('函数 processbar 响应 失败')
-        console.log('error')
-        console.log(error)
-      })
-    },
     dbInput () {
       console.log('dbInput')
       this.isloading = true
-      // NProgress.start()
       var tables = []
       for (var key in this.multipleSelection) {
         tables.push(this.multipleSelection[key].title)
         console.log(this.multipleSelection[key].title)
       }
-      // JSON.parse(tables)
-      // JSON.stringify(tables)
-      console.log(this.tables)
+      console.log('filetype')
+      console.log(this.head)
       this.$http.post(this.user.httppath + '/api/Bulkcm/BulkParse',
         { tableName: tables },
         { headers: this.head }
       ).then((response) => {
-        console.log('函数 dbInput success')
-        console.log(response)
         this.isloading = false
-        if (response === isNaN) {
-
-        }
+        this.$notify({
+          title: '成功',
+          message: '解析完成',
+          type: 'success'
+        })
       }).catch((error) => {
+        this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
         console.log('函数 dbInput error')
-        console.log(error)
-      })
-      // NProgress.done()
-    },
-    myUpload () {
-      console.log('这是函数 myupload')
-      // this.submitUpload ()
-      console.log(this.fileList)
-      this.$http.post(this.user.httppath + '/api/Mr/Upload',
-        this.fileList
-      ).then((response) => {
-      }).catch((error) => {
         console.log(error)
       })
     },
@@ -241,6 +217,7 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+      console.log(this.multipleSelection)
     }
   }
 }
@@ -249,7 +226,7 @@ export default {
 .elmro {
   text-align: center;
 }
-.pagination-wrapper{
+.pagination-wrapper {
   float: right;
 }
 </style>

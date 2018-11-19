@@ -43,10 +43,16 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'login',
+  computed: {
+    ...mapState({
+      prom: (state) => state.prom,
+      user: (state) => state.user
+    })
+  },
   data () {
     return {
       username: '',
@@ -96,7 +102,7 @@ export default {
       //     this.$router.push({name: 'home'})
       //   }
       // })
-      this.$http.post('http://192.168.0.237:2860/api/WebUser/Login', loginUser).then(res => {
+      this.$http.post(this.user.httppath + '/api/WebUser/Login', loginUser).then(res => {
         console.log(res)
         if (res === '不存在该用户') {
           this.$notify({
@@ -111,7 +117,8 @@ export default {
             type: 'warning'
           })
         } else {
-          console.log(res)
+          sessionStorage.setItem('pname', 'default')
+          console.log(sessionStorage.getItem('pname'))
           this.login({
             username: this.username,
             password: this.password,

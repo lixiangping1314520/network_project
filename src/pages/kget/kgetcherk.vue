@@ -122,7 +122,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -153,7 +153,31 @@ export default {
       tableName: ''
     }
   },
+  created () {
+    console.log('bulkcm crate 函数')
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'kget' } }
+    this.$http.post(this.user.httppath + '/api/Kget/CheckCfg',
+      {},
+      this.headers
+    ).then((response) => {
+      this.tables = response
+
+      // 刚打开页面时加载前10项、且自动生成分页数量
+      this.handleCurrentChange(1)
+      this.initPageNum()
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
   methods: {
+    ...mapMutations(['setpname_prom']),
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
       // pageIndex = pageIndex || 1
@@ -245,22 +269,6 @@ export default {
     //   }
     //   console.log(this.oneTable)
     // }
-  },
-  created () {
-    console.log('bulkcm crate 函数')
-    this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'kget' } }
-    this.$http.post(this.user.httppath + '/api/Kget/CheckCfg',
-      {},
-      this.headers
-    ).then((response) => {
-      this.tables = response
-
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange(1)
-      this.initPageNum()
-    }).catch((error) => {
-      console.log(error)
-    })
   }
 }
 </script>

@@ -36,6 +36,10 @@ export default {
       test: ''
     }
   },
+  created () {
+    console.log('kgetside.vue kegtside 函数')
+    this.setCurrentRoute()
+  },
   watch: {
     $route () {
       this.setCurrentRoute()
@@ -51,10 +55,6 @@ export default {
     mrtype () {
       this.setpm_typeNow(this.typevalue.toLowerCase())
     }
-  },
-  created () {
-    console.log('kgetside.vue kegtside 函数')
-    this.setCurrentRoute()
   }
 }
 </script>

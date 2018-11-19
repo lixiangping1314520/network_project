@@ -5,9 +5,9 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
+                 :action="uploadAction"
                  :on-preview="handlePreview"
-                 :data="head"
+                 :headers="uploadHead"
                  :on-remove="handleRemove"
                  :file-list="fileList"
                  :auto-upload="false"
@@ -35,7 +35,7 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -47,15 +47,25 @@ export default {
     return {
       processNum: 70,
       head: {},
+      uploadHead: {},
       fileList: [],
       uploadAction: ''
     }
   },
   created: function () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'pm' }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'pm', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAction = this.user.httppath + 'api/Pm/Upload'
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     analysis2 () {
       var id = setInterval(() => {
         var a = 100

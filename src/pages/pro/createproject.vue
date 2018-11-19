@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <el-container>
+    <el-container >
       <el-form ref="form"
                :model="form"
                label-width="100px">
@@ -27,10 +26,9 @@
                    @click="onSubmit">立即创建</el-button>
       </el-form>
     </el-container>
-  </div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -51,12 +49,22 @@ export default {
   },
   created: function () {
     console.log(' 创建工程 created')
+    console.log(document.cookie)
     this.headers = { headers: { 'username': JSON.parse(sessionStorage.user).username } }
     console.log(this.headers)
   },
   methods: {
-    ...mapMutations(['addDate_prom']),
+    // ...mapMutations(['updateData_prom']),
     onSubmit () {
+      const pattern = /^[a-zA-Z0-9\u4e00-\u9fa5]{2,20}$/
+      if (!pattern.test(this.form.name)) {
+        this.$notify({
+          title: '警告',
+          message: '项目名称设置错误',
+          type: 'warning'
+        })
+        return
+      }
       if (this.form.name === 'default') {
         this.$notify({
           title: '警告',
@@ -73,7 +81,7 @@ export default {
           this.headers
         ).then((response) => {
           if (response === 'success') {
-            this.addDate_prom(parm)
+            // this.addDate_prom(parm)
             this.$notify({
               title: '成功',
               message: '创建项目成功: ' + this.form.name,
@@ -102,10 +110,10 @@ export default {
 
 <style type="text/css">
 .fullscreen {
-  border-style: ridge;
-  margin-top: 1%;
-  margin-left: 38%;
-  width: 500px;
+  /* border-style: ridge; */
+   /* margin-top: 1%;
+  margin-left: 38%; */
+  width: 500px; 
 }
 .el-input {
   width: 350px;

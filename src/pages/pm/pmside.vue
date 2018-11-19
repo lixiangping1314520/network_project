@@ -56,13 +56,23 @@ export default {
       test: 'asdfasdf'
     }
   },
+  created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+    this.setCurrentRoute()
+  },
   watch: {
     $route () {
       this.setCurrentRoute()
     }
   },
   methods: {
-    ...mapMutations(['setpm_typeNow']),
+    ...mapMutations(['setpm_typeNow', 'setpname_prom']),
     setCurrentRoute () {
       // console.log(this.$route)
       console.log('pm 选择路径函数')
@@ -71,9 +81,6 @@ export default {
     mrtype () {
       this.setpm_typeNow(this.typevalue.toLowerCase())
     }
-  },
-  created () {
-    this.setCurrentRoute()
   }
 }
 </script>

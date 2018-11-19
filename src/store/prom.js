@@ -2,21 +2,12 @@
 const state = {
   prom_data_list: [],
   // 当前工程名称
-  prom_pname: 'default1'
+  prom_pname: 'default'
 }
 
 const mutations = {
   setData_prom (state, obj) {
-    // for (let item of obj) {
-    //   var json = {}
-    //   json.id = parseInt(item['id'])
-    //   json.label = item['name']
-    //   state.prom_headerData.push(json)
-    // }
-    // state.playlist = JSON.parse(JSON.stringify(obj))
-    // state.prom_headerData = Object.assign([], obj)
     state.prom_data_list = obj
-    // state.prom_data_list = Object.assign([], obj)
   },
   setpname_prom (state, obj) {
     state.prom_pname = obj
@@ -60,22 +51,6 @@ const getters = {
     }
     return headerData
   }
-  // getMrHeader: (state) => {
-  //   console.log('这是 getMrHeader 函数')
-  //   var pmhead = []
-  //   var sStorage = sessionStorage.getItem('user')
-  //   var headers = {headers: {'projectname': state.prom_pname, 'username': sStorage.username, 'filetype': 'mr'}}
-  //   // this.$http.post('http://192.168.0.237:2861/api/MRTest/MrInfo',
-  //   axios.post('http://192.168.0.237:2860/api/MRTest/MrInfo',
-  //     {},
-  //     headers
-  //   ).then((response) => {
-  //     pmhead = response
-  //   }).catch((error) => {
-  //     console.log(error)
-  //   })
-  //   return pmhead
-  // }
 }
 
 const actions = {
@@ -83,7 +58,13 @@ const actions = {
     commit('setData_prom', obj)
   },
   async acSetpname_prom ({ commit }, obj) {
+    // console.log('这是 工程名称函数')
+    // console.log(obj)
+    // sessionStorage.removeItem('pname')
+    // sessionStorage.setItem('pname', JSON.stringify(obj))
+    // console.log(sessionStorage.getItem('pname'))
     commit('setpname_prom', obj)
+    // console.log('这是 工程名称函数 结束')
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-main>
       </br>
       <el-select v-model="typevalue"
                  size="small"
@@ -82,8 +82,6 @@
                v-model="thresholdHight"
                theme="danger"
                size="small" />
-    </el-header>
-    <el-main>
       </br> </br> </br> </br> </br> </br> </br> </br>
       <div id="myChart"
            :style="{width: '900px', height: '300px'}"></div>
@@ -119,12 +117,12 @@
   </el-container>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
-      users: (state) => state.user
+      user: (state) => state.user
     })
   },
   data () {
@@ -164,7 +162,13 @@ export default {
     }
   },
   created () {
-    console.log(this.users)
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
     var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }
     this.$http.post(this.user.httppath + '/api/MRTest/MrInfo',
       {},
@@ -182,6 +186,7 @@ export default {
     this.drawLine()
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     counter () {
       this.datap = []
       // selectedOptions2

@@ -30,6 +30,9 @@ export default {
       test: 'asdfasdf'
     }
   },
+  created () {
+    this.setCurrentRoute()
+  },
   watch: {
     $route () {
       this.setCurrentRoute()
@@ -41,9 +44,6 @@ export default {
       console.log('mr 选择路由函数')
       this.defaultActive = this.$route.name
     }
-  },
-  created () {
-    this.setCurrentRoute()
   }
 }
 </script>

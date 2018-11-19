@@ -43,7 +43,7 @@
   </el-container>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapState({
@@ -66,12 +66,23 @@ export default {
       }
     }
   },
+  created () {
+    if (sessionStorage.getItem('pname')) {
+      this.setpname_prom(sessionStorage.getItem('pname'))
+    }
+    // 在页面刷新时将vuex里的信息保存到localStorage里
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
+    })
+  },
+
   watch: {
     filterText (val) {
       this.$refs.tree2.filter(val)
     }
   },
   methods: {
+    ...mapMutations(['setpname_prom']),
     handleNodeClick (data) {
       console.log('这是 handleNodeClick 函数')
       console.log('这是跳转函数')

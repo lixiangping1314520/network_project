@@ -1,11 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      </br>
-      <el-button type="primary"
-                 icon="el-icon-search"
-                 size="mini"
-                 @click="output()">导出</el-button>
+      <export-table :tableData="result"></export-table>
       </br> </br>
     </el-header>
     <el-main>
@@ -58,13 +54,16 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
-import outputTable from '../../basic/outputTable.js'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   destroyed () {
     // this.tables = []
@@ -125,12 +124,6 @@ export default {
     },
     initPageNum_2 () {
       this.pageNum_2 = this.result.length
-    },
-
-    output () {
-      if (this.result.length !== 0) {
-        outputTable(this.result)
-      }
     },
     handleSelectionChange () {
       console.log('handleSelectionChange 函数')

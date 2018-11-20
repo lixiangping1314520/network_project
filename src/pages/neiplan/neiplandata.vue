@@ -1,12 +1,13 @@
 <template>
   <el-container>
     <el-header>
-      </br>
-      <el-button type="primary"
+       </br>
+      <export-table :tableData="oneTable" v-if="oneTable.length"></export-table>
+       <!-- <el-button type="primary"
                  icon="el-icon-search"
                  size="mini"
                  @click="output()">导出</el-button>
-      </br> </br>
+      </br> </br> -->
     </el-header>
     <el-main>
       <el-container>
@@ -43,6 +44,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable'
 import outputTable from '../../basic/outputTable.js'
 export default {
   computed: {
@@ -50,6 +52,9 @@ export default {
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -95,12 +100,17 @@ export default {
       }
     },
     getOneTable () {
-      if (this.value === '3g 邻区规划') {
+      if (this.value === '4g 邻区规划') {
+        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['lte']))
         this.oneTable = this.resultTable['lte']
       } else if (this.value === '3g 邻区规划') {
+        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['umts']))
         this.oneTable = this.resultTable['umts']
-      } else {
+      } else if (this.value === 'pci/rsn 规划') {
+        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['pci']))
         this.oneTable = this.resultTable['pci']
+      } else {
+        this.oneTable = []
       }
     }
   }

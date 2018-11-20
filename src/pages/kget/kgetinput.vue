@@ -13,12 +13,12 @@
                  :auto-upload="false"
                  :limit="1"
                  :multiple="true"
-                 accept=".zip, .xml, .gz">
+                 accept=".log">
         <el-button slot="trigger"
                    size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
-             class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
+             class="el-upload__tip">支持.log格式的文件</div>
         <el-button style="margin-left: 10px;"
                    size="mini"
                    type="success"
@@ -30,10 +30,11 @@
       <br>
       <el-button @click="analysis"
                  size="mini"
+                 :loading="isloading"
                  type="primary">解析</el-button>
-      <h1>解析进度</h1>
+      <!-- <h1>解析进度</h1>
       <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+                   :percentage=this.processNum></el-progress> -->
     </el-aside>
     <!-- <br>
     <div class="progress">
@@ -64,7 +65,8 @@ export default {
       processNum: 0,
       head: {},
       uploadHead: {},
-      fileList: []
+      fileList: [],
+      isloading: false
     }
   },
   created () {
@@ -124,15 +126,24 @@ export default {
     },
     dbInput () {
       console.log('dbInput')
+      this.isloading = true
       this.$http.post(this.user.httppath + '/api/Kget/KgetParse',
         {},
         { headers: this.head }
       ).then((response) => {
-        console.log('函数 dbInput success')
-        console.log(response)
+        this.isloading = false
+        this.$notify({
+          title: '成功',
+          message: '解析成功',
+          type: 'success'
+        })
       }).catch((error) => {
-        console.log('函数 dbInput error')
-        console.log(error)
+        this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
       })
     },
     myUpload () {

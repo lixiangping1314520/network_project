@@ -32,9 +32,9 @@
                  :loading="isloading"
                  size="mini"
                  @click="analysis">解析</el-button>
-      <h1>解析进度</h1>
+      <!-- <h1>解析进度</h1>
       <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+                   :percentage=this.processNum></el-progress> -->
     </el-aside>
   </el-container>
 </template>
@@ -119,11 +119,18 @@ export default {
         { headers: this.headers }
       ).then((response) => {
         this.isloading = false
-        console.log('函数 dbInput success')
-        console.log(response)
+        this.$notify({
+          title: '成功',
+          message: '解析成功',
+          type: 'success'
+        })
       }).catch((error) => {
-        console.log('函数 dbInput error')
-        console.log(error)
+        this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
       })
     },
     submitUpload () {

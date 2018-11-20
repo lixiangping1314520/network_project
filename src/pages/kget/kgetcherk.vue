@@ -53,7 +53,7 @@
       <el-button type="primary"
                  size="mini"
                  @click="addrow">新增</el-button>
-      <el-form v-show="false"
+      <el-form v-show="isShow"
                ref="form"
                :model="form"
                label-width="110px">
@@ -70,7 +70,11 @@
           <el-input v-model="form.Baseline_Value"></el-input>
         </el-form-item>
         <el-button type="primary"
+                   size="mini"
                    @click="onSubmit(selectrow)">确认</el-button>
+        <el-button type="primary"
+                   size="mini"
+                   @click="cancel()">取消</el-button>
       </el-form>
       <el-button type="primary"
                  :loading="isloading"
@@ -142,7 +146,6 @@ export default {
       tables: [],
       pageNum: 0,
       showTables: [],
-
       pageNum_1: 0,
       oneTable_1: [],
       form: {
@@ -156,6 +159,7 @@ export default {
       resultTableName: [{ tableName: 'CheckResult' }, { tableName: 'ErrorResult' }],
       oneTable: [],
       isloading: false,
+      isShow: false,
       tableName: ''
     }
   },
@@ -215,6 +219,7 @@ export default {
       this.initPageNum_1()
     },
     handleEdit (index, row) {
+      this.isShow = true
       this.selectrow = index
       this.form['MOC_Name'] = this.tables[index]['MOC_Name']
       this.form['Param_Name'] = this.tables[index]['Param_Name']
@@ -227,6 +232,7 @@ export default {
       console.log(index, row)
     },
     addrow () {
+      this.isShow = true
       this.selectrow = -1
       this.form['MOC_Name'] = ''
       this.form['Param_Name'] = ''
@@ -243,6 +249,14 @@ export default {
       } else {
         this.tables.push(this.form)
       }
+      this.isShow = false
+    },
+    cancel () {
+      this.isShow = false
+      this.form['MOC_Name'] = ''
+      this.form['Param_Name'] = ''
+      this.form['Para_Description'] = ''
+      this.form['Baseline_Value'] = ''
     },
     save () {
       this.isloading = true
@@ -251,9 +265,6 @@ export default {
         this.headers
       ).then((response) => {
         this.resultTable = response
-
-
-
         console.log(this.resultTable)
         this.isloading = false
         this.$notify({

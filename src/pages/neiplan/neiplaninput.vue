@@ -3,12 +3,11 @@
     <el-aside width="500px">
       <br>
       <br>
-      <div style="margin-left: 190px">支持csv格式的文件</div>
-      <br>
       <el-upload class="elmro"
                  ref="uploadUmts"
-                 action="uploadAciton"
+                 :action="uploadAciton"
                  :headers="uploadHead"
+                 :data="gsmDate"
                  bind:on-preview="handlePreviewUmts"
                  :on-remove="handleRemoveUmts"
                  :file-list="fileListUmts"
@@ -19,13 +18,15 @@
         <el-button slot="trigger"
                    size="small"
                    type="primary">3g 宏站文件</el-button>
-        <!-- <div slot="tip" class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>   -->
+        <div slot="tip"
+             class="el-upload__tip">支持.txt格式的文件</div>
       </el-upload>
       <br>
       <el-upload class="elmro"
                  ref="uploadLte"
-                 action="uploadAciton"
+                 :action="uploadAciton"
                  :headers="uploadHead"
+                 :data="lteDate"
                  :on-preview="handlePreviewLte"
                  :on-remove="handleRemoveLte"
                  :file-list="fileListLte"
@@ -36,11 +37,13 @@
         <el-button slot="trigger"
                    size="small"
                    type="primary">4g 宏站文件</el-button>
+        <div slot="tip"
+             class="el-upload__tip">支持.txt格式的文件</div>
       </el-upload>
       <br>
       <el-upload class="elmro"
                  ref="uploadCell"
-                 action="uploadAciton"
+                 :action="uploadAciton"
                  :headers="uploadHead"
                  :on-preview="handlePreviewCell"
                  :on-remove="handleRemoveCell"
@@ -48,16 +51,43 @@
                  :auto-upload="false"
                  :limit="1"
                  :multiple="true"
-                 accept=".txt">
+                 accept=".csv">
         <el-button slot="trigger"
                    size="small"
                    type="primary">规划小区文件</el-button>
+        <div slot="tip"
+             class="el-upload__tip">支持.csv格式的文件</div>
+
       </el-upload>
-      <br>
       <el-button style="margin-left: 200px;"
                  size="small"
                  type="success"
-                 :focus="submitUpload">上传到服务器</el-button>
+                 @click="submitUpload">上传到服务器</el-button>
+      <br>
+      <!-- <el-upload class="elmro"
+                 ref="uploadCell"
+                 :action="uploadAciton"
+                 :headers="uploadHead"
+                 :on-preview="handlePreviewCell"
+                 :on-remove="handleRemoveCell"
+                 :file-list="fileListCell"
+                 :auto-upload="false"
+                 :limit="1"
+                 :multiple="true"
+                 accept=".csv">
+        <el-button slot="trigger"
+                   size="small"
+                   type="primary">选取文件</el-button>
+        <div slot="tip"
+             class="el-upload__tip">支持.csv格式的文件</div>
+       
+      </el-upload>
+       <el-button style="margin-left: 200px;"
+                   size="small"
+                   type="success"
+                   @click="submitUpload">上传到服务器</el-button>
+      <br> -->
+
     </el-aside>
     <el-main>
       <div style="margin-left: 200px;">参数设置</div>
@@ -146,9 +176,9 @@
                  :loading="isloading"
                  size="mini"
                  @click="analysis">解析</el-button>
-      <h1>解析进度</h1>
+      <!-- <h1>解析进度</h1>
       <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+                   :percentage=this.processNum></el-progress> -->
     </el-main>
   </el-container>
 </template>
@@ -166,6 +196,8 @@ export default {
       uploadAciton: '',
       processNum: 0,
       head: {},
+      gsmDate: {},
+      lteDate: {},
       uploadHead: {},
       fileListUmts: [],
       fileListLte: [],
@@ -200,6 +232,8 @@ export default {
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
     this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAciton = this.user.httppath + '/api/NeiPlan/Upload'
+    this.gsmDate = {'neifiletype': 'umts'}
+    this.lteDate = {'neifiletype': 'lte'}
   },
   methods: {
     ...mapMutations(['setpname_prom']),
@@ -230,14 +264,19 @@ export default {
         { form: this.form },
         heads
       ).then((response) => {
-        console.log('函数 dbInput success')
-        // this.processNum = 100
         this.isloading = false
-        console.log(response)
+        this.$notify({
+          title: '成功',
+          message: '解析完成',
+          type: 'success'
+        })
       }).catch((error) => {
-        console.log('函数 dbInput error')
-        console.log(error)
         this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
       })
     },
     handleRemoveUmts (file, fileList) {
@@ -269,8 +308,8 @@ export default {
       } else {
         console.log(this.head)
         this.$refs.uploadUmts.submit()
-        this.$refs.uploadLte.submit()
         this.$refs.uploadCell.submit()
+        this.$refs.uploadLte.submit()
       }
     },
     handleClick (tab, event) {

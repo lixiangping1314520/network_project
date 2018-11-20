@@ -91,9 +91,11 @@
           <el-input v-model="form.VERSION"></el-input>
         </el-form-item>
         <el-button type="primary"
+                   size="mini"
                    @click="onSubmit(selectrow)">确认</el-button>
         <el-button type="primary"
-                   @click="cancel()">取消</el-button>
+                   size="mini"
+                   @click="cancel()">取消</el-button>          
       </el-form>
       <el-button type="primary"
                  :loading="isloading"
@@ -300,7 +302,7 @@ export default {
         console.log(response)
         this.$notify({
           title: '成功',
-          message: '解析完成: ',
+          message: '解析完成',
           type: 'success'
         })
       }).catch((error) => {

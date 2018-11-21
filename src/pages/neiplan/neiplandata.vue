@@ -1,21 +1,15 @@
 <template>
   <el-container>
     <el-header>
-       </br>
-      <export-table :tableData="oneTable" v-if="oneTable.length"></export-table>
-       <!-- <el-button type="primary"
-                 icon="el-icon-search"
-                 size="mini"
-                 @click="output()">导出</el-button>
-      </br> </br> -->
+      </br>
+      <export-table :tableData="oneTable"></export-table>
     </el-header>
     <el-main>
       <el-container>
         <el-aside width="300px">
           <el-select v-model="value"
                      size="mini"
-                     placeholder="规划结果"
-                     :change="getOneTable()">
+                     placeholder="规划结果">
             <el-option v-for="item in resultTableName"
                        :key="item.value"
                        :label="item.value"
@@ -92,25 +86,25 @@ export default {
       console.log(error)
     })
   },
+  watch: {
+    value (newVal) {
+      if (newVal === '4g 邻区规划') {
+        this.oneTable = this.resultTable['lte']
+      } else if (newVal === '3g 邻区规划') {
+        this.oneTable = this.resultTable['umts']
+      } else if (newVal === 'pci/rsn 规划') {
+        this.oneTable = this.resultTable['pci']
+      } else {
+        this.oneTable = []
+      }
+    }
+
+  },
   methods: {
     ...mapMutations(['setpname_prom']),
     output () {
       if (this.oneTable.length !== 0) {
         outputTable(this.oneTable)
-      }
-    },
-    getOneTable () {
-      if (this.value === '4g 邻区规划') {
-        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['lte']))
-        this.oneTable = this.resultTable['lte']
-      } else if (this.value === '3g 邻区规划') {
-        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['umts']))
-        this.oneTable = this.resultTable['umts']
-      } else if (this.value === 'pci/rsn 规划') {
-        // this.oneTable = JSON.parse(JSON.stringify(this.resultTable['pci']))
-        this.oneTable = this.resultTable['pci']
-      } else {
-        this.oneTable = []
       }
     }
   }

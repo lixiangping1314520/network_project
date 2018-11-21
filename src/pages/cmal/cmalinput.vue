@@ -18,7 +18,7 @@
                    size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
-             class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
+             class="el-upload__tip">支持.xlsx格式的文件</div>
         <el-button style="margin-left: 10px;"
                    size="mini"
                    type="success"

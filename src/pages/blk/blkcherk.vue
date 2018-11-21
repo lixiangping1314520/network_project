@@ -249,8 +249,9 @@ export default {
       console.log(index, row)
     },
     handleDelete (index, row) {
-      this.tables.splice(index, 1)
+      console.log('这是删除函数')
       console.log(index, row)
+      this.tables.splice(index, 1)
     },
     addrow () {
       this.updatashow = true

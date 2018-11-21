@@ -96,7 +96,6 @@ export default {
       this.headers
     ).then((response) => {
       this.tables = response
-
       // 刚打开页面时加载前10项、且自动生成分页数量
       this.handleCurrentChange_1(1)
       this.initPageNum_1()

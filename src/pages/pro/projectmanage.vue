@@ -165,7 +165,7 @@ export default {
       var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username }
       this.$http.post(this.user.httppath + '/api/ProManage/DeleteProject',
         parm,
-        head
+        {headers: head}
       ).then((response) => {
         if (response === 'success') {
           this.deleteDate_prom(id)

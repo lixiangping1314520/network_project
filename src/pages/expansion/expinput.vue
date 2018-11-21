@@ -5,23 +5,22 @@
       <br>
       <el-upload class="elmro"
                  ref="upload"
-                 action="uploadAction"
+                 :action="uploadAction"
                  :headers="uploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
-                 :on-success="success"
                  :file-list="fileList"
                  :auto-upload="false"
                  :limit="1"
                  :multiple="true"
                  accept=".xlsx">
         <el-button slot="trigger"
-                   size="small"
+                   size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
-             class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
+             class="el-upload__tip">支持.xlsx格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="small"
+                   size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
@@ -43,6 +42,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini"
+                       fixed='right'
                        @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           </template>
         </el-table-column>
@@ -54,7 +54,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="pagination-wrapper">
         <el-pagination layout="prev, pager, next"
                        :total="pageNum"
@@ -62,7 +61,6 @@
                        @current-change="handleCurrentChange">
         </el-pagination>
       </div>
-
     </el-aside>
     <el-main>
       <br>
@@ -101,6 +99,9 @@
         <el-button type="primary"
                    size="mini"
                    @click="onSubmit(selectrow)">确认</el-button>
+        <el-button type="primary"
+                   size="mini"
+                   @click="cancel()">取消</el-button>
       </el-form>
       <br>
       <el-button type="primary"
@@ -108,16 +109,6 @@
                  size="mini"
                  @click="analysis">解析</el-button>
       <export-table :tableData="oneTable"></export-table>
-      <!-- <el-table width="400px"
-                @row-click="handleRowChange"
-                :highlight-current-row="true"
-                :data="resultTableName">
-        <el-table-column :show-overflow-tooltip="true"
-                         prop="tableName"
-                         label="表名称">
-        </el-table-column>
-      </el-table> -->
-
       <el-form :inline="true"
                class="demo-form-inline"
                style="margin-top: 10px">
@@ -203,7 +194,6 @@ export default {
     }
   },
   created () {
-    console.log('这是create 函数')
     if (sessionStorage.getItem('pname')) {
       this.setpname_prom(sessionStorage.getItem('pname'))
     }
@@ -215,7 +205,9 @@ export default {
     this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
 
     this.uploadAction = this.user.httppath + '/api/Expasion/Upload'
-    console.log(this.headers)
+    console.log('这是uploadAction')
+    console.log(this.uploadAction)
+    console.log(JSON.stringify(this.headers))
     this.$http.post(this.user.httppath + '/api/Expasion/GetInTemplate',
       {},
       { headers: this.headers }
@@ -296,20 +288,6 @@ export default {
       this.tables.splice(index, 1)
       console.log(index, row)
     },
-    // handleRowChange (row) {
-    //   console.log(row)
-    //   if (this.resultTable === '') {
-    //     return
-    //   }
-    //   if (row['tableName'] === '扩容结果') {
-    //     this.oneTable = this.resultTable['扩容结果']
-    //   } else if (row['tableName'] === '扩容错误信息') {
-    //     this.oneTable = this.resultTable['扩容错误信息']
-    //   } else {
-    //     this.oneTable = this.resultTable['错误信息']
-    //   }
-    //   console.log(this.oneTable)
-    // },
     changeTableName () {
       console.log(this.tableName)
       if (this.resultTable === '') {
@@ -370,12 +348,10 @@ export default {
       }
     },
     handleRemove (file, fileList) {
-      console.log('这是函数 handleRemove')
       console.log(file)
       console.log(fileList)
     },
     handlePreview (file) {
-      console.log('这是函数 handlePreview')
       console.log(file)
     },
     onSubmit (row) {
@@ -394,6 +370,17 @@ export default {
         this.tables.push(this.form)
       }
       this.isShow = !this.isShow
+    },
+    cancel () {
+      this.form['CATEGORY'] = ''
+      this.form['CELLTYPE2'] = ''
+      this.form['FILTER'] = ''
+      this.form['MONAME'] = ''
+      this.form['MOVALUE'] = ''
+      this.form['PARANAME'] = ''
+      this.form['RECOMMENDEDVALUE'] = ''
+      this.form['VERSION'] = ''
+      this.isShow = false
     }
   }
 }

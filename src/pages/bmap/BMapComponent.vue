@@ -76,7 +76,7 @@ export default {
       // 地图初始化
       let point = new BMap.Point(104.063749, 30.659203)
       this.bm.centerAndZoom(point, 10)
-      // this.myDis = new BMapLib.DistanceTool(this.bm)
+      this.myDis = new BMapLib.DistanceTool(this.bm)
       // 创建点
       // this.bm.centerAndZoom('成都', 12)
       // 设置地图显示的城市 此项是必须设置

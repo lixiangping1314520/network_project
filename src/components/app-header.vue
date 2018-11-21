@@ -1,78 +1,83 @@
 <template>
-<m-navbar :theme="theme.theme.headerTheme">
-  <m-navbar-brand>
-    <i class="side-switch"
-      :class="{
+  <m-navbar :theme="theme.theme.headerTheme">
+    <m-navbar-brand>
+      <i class="side-switch"
+         :class="{
         'el-icon-more': !mini,
         'el-icon-more-outline': mini
       }"
-      @click="handleSwitchSide"
-      ></i>
-  </m-navbar-brand>
-  <!-- <m-nav>
+         @click="handleSwitchSide"></i>
+    </m-navbar-brand>
+    <!-- <m-nav>
     <m-nav-item><a href="https://www.lanyueos.com" target="_blank">主页</a></m-nav-item>
     <m-nav-item><a href="https://blog.lanyueos.com" target="_blank">博客</a></m-nav-item>
     <m-nav-item><a href="https://www.lanyueos.com" target="_blank">关于</a></m-nav-item>
   </m-nav> -->
-  <m-nav align="right">
-    <!-- <m-nav-item padding="0">
+    <m-nav align="right">
+      <!-- <m-nav-item padding="0">
       <a href="https://github.com/mengdu/vue-element-admin-tpl" target="_blank"><i class="fa fa-github" style="font-size: 26px;vertical-align: middle;"></i>&nbsp;Github</a>
     </m-nav-item> -->
-    <m-nav-item padding="0">
-      <m-dropdown align="right" v-if="user" padding="0 10px">
-        <a href="#" style="display: inline-block; padding: 0px; color: inherit">
-          <img src="../assets/user.jpg" alt="" style="border-radius: 3px;vertical-align: middle;">
-          <span>{{user.username}}</span>
-          <span class="caret"></span>
-        </a>        
-        <m-dropdown-panel>
-          <m-dropdown-item>用户信息</m-dropdown-item>
-          <m-dropdown-item name="p-resetPassWord">修改密码</m-dropdown-item>
-          <m-dropdown-item disabled>注销</m-dropdown-item>
-          <div class="test-line"></div>
-          <!-- <m-dropdown-item name="login">退出账号</m-dropdown-item> -->
-          <m-dropdown-item  name="login">退出账号</m-dropdown-item>
-        </m-dropdown-panel>
-      </m-dropdown>
-    </m-nav-item> 
-    <m-nav-item padding="0 5px">
-      <a href="#" @click.stop.prevent="handleSwitchScreen">
-        <i 
-          class="fa" 
-          :class="isFullScreen ? 'fa-compress' : 'fa-expand'"
-          ></i>
-      </a>
-    </m-nav-item>
-    <m-nav-item padding="0">
-      <m-dropdown align="right" padding="0 10px">
-        <a href="#"  style="padding:0 0px; color: inherit">
-          <i class="fa fa-gears"></i>
+      <m-nav-item padding="0">
+        <m-dropdown align="right"
+                    v-if="user"
+                    padding="0 10px">
+          <a href="#"
+             style="display: inline-block; padding: 0px; color: inherit">
+            <img src="../assets/user.jpg"
+                 alt=""
+                 style="border-radius: 3px;vertical-align: middle;">
+            <span>{{user.username}}</span>
+            <span class="caret"></span>
+          </a>
+          <m-dropdown-panel>
+            <m-dropdown-item name="p-userMessage">用户信息</m-dropdown-item>
+            <m-dropdown-item name="p-resetPassWord">修改密码</m-dropdown-item>
+            <!-- <m-dropdown-item disabled>注销</m-dropdown-item> -->
+            <div class="test-line"></div>
+            <!-- <m-dropdown-item name="login">退出账号</m-dropdown-item> -->
+            <m-dropdown-item><span @click.prevent="goOut">退出账号</span></m-dropdown-item>
+          </m-dropdown-panel>
+        </m-dropdown>
+      </m-nav-item>
+      <m-nav-item padding="0 5px">
+        <a href="#"
+           @click.stop.prevent="handleSwitchScreen">
+          <i class="fa"
+             :class="isFullScreen ? 'fa-compress' : 'fa-expand'"></i>
         </a>
-        <m-dropdown-panel style="width: 200px; min-height: 100px;">
-          <el-form>
-            <el-form-item label="侧边栏">
-              <el-switch v-model="showAside" @change="handleSwitchHideSide" />
-            </el-form-item>
-            <el-form-item label="主题">
-              <el-select v-model="themeType" style="width: 100px">
-                <el-option
-                  v-for="theme in themes"
-                  :key="theme.label"
-                  :label="theme.label"
-                  :value="theme.name"
-                  ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </m-dropdown-panel>
-      </m-dropdown>
-    </m-nav-item>
-  </m-nav>
-</m-navbar>
+      </m-nav-item>
+      <m-nav-item padding="0">
+        <m-dropdown align="right"
+                    padding="0 10px">
+          <a href="#"
+             style="padding:0 0px; color: inherit">
+            <i class="fa fa-gears"></i>
+          </a>
+          <m-dropdown-panel style="width: 200px; min-height: 100px;">
+            <el-form>
+              <el-form-item label="侧边栏">
+                <el-switch v-model="showAside"
+                           @change="handleSwitchHideSide" />
+              </el-form-item>
+              <el-form-item label="主题">
+                <el-select v-model="themeType"
+                           style="width: 100px">
+                  <el-option v-for="theme in themes"
+                             :key="theme.label"
+                             :label="theme.label"
+                             :value="theme.name"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </m-dropdown-panel>
+        </m-dropdown>
+      </m-nav-item>
+    </m-nav>
+  </m-navbar>
 </template>
 
 <script type="text/javascript">
-import {mapActions, mapState} from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import {
   requestFullScreen,
   exitFullscreen
@@ -88,12 +93,12 @@ export default {
       themes,
       themeType: '',
       showAside: true,
-      theme: {theme: {headerTheme: 'info'}}
+      theme: { theme: { headerTheme: 'info' } }
     }
   },
   computed: {
     ...mapState({
-      user: ({user}) => user.user
+      user: ({ user }) => user.user
     })
   },
   watch: {
@@ -121,6 +126,10 @@ export default {
     handleSwitchHideSide () {
       console.log('change')
       this.$emit('hide-side')
+    },
+    goOut () {
+      sessionStorage.clear()
+      this.$router.push({ name: 'login' })
     }
   },
   created () {
@@ -132,14 +141,14 @@ export default {
 </script>
 
 <style type="text/css">
-  .side-switch{
-    display: inline-block;
-    font-size: 32px;
-    cursor: pointer;
-    color: inherit;
-    margin-top: 10px;
-  }
-  .side-switch:hover{
-    color: #fff;
-  }
+.side-switch {
+  display: inline-block;
+  font-size: 32px;
+  cursor: pointer;
+  color: inherit;
+  margin-top: 10px;
+}
+.side-switch:hover {
+  color: #fff;
+}
 </style>

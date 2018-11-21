@@ -64,30 +64,6 @@
                  type="success"
                  @click="submitUpload">上传到服务器</el-button>
       <br>
-      <!-- <el-upload class="elmro"
-                 ref="uploadCell"
-                 :action="uploadAciton"
-                 :headers="uploadHead"
-                 :on-preview="handlePreviewCell"
-                 :on-remove="handleRemoveCell"
-                 :file-list="fileListCell"
-                 :auto-upload="false"
-                 :limit="1"
-                 :multiple="true"
-                 accept=".csv">
-        <el-button slot="trigger"
-                   size="small"
-                   type="primary">选取文件</el-button>
-        <div slot="tip"
-             class="el-upload__tip">支持.csv格式的文件</div>
-       
-      </el-upload>
-       <el-button style="margin-left: 200px;"
-                   size="small"
-                   type="success"
-                   @click="submitUpload">上传到服务器</el-button>
-      <br> -->
-
     </el-aside>
     <el-main>
       <div style="margin-left: 200px;">参数设置</div>
@@ -97,7 +73,7 @@
         <el-tab-pane label="4G-4G 宏站"
                      name="first">4G-4G 宏站</el-tab-pane>
         <el-tab-pane label="4G-4G 室分"
-                     name="second">4G-G 室分</el-tab-pane>
+                     name="second">4G-4G 室分</el-tab-pane>
         <el-tab-pane label="4G-3G"
                      name="third">4G-3G</el-tab-pane>
         <el-tab-pane label="RSI/PCI 规划"

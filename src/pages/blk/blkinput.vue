@@ -24,7 +24,6 @@
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-
       <el-table ref="multipleTable"
                 :data="currentPageData"
                 tooltip-effect="dark"
@@ -32,7 +31,6 @@
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection"
                          width="30">
-        </el-table-column>
         </el-table-column>
         <el-table-column prop="title"
                          label="表名"
@@ -42,7 +40,7 @@
         </el-table-column>
       </el-table>
       </div>
-
+      
       <div class="pagination-wrapper">
         <el-pagination layout="prev, pager, next"
                        :total="pageNum"
@@ -58,9 +56,6 @@
                  :loading="isloading"
                  size="mini"
                  @click="analysis">解析</el-button>
-      <!-- <h1>解析进度</h1> -->
-      <!-- <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress> -->
     </el-main>
   </el-container>
 </template>
@@ -76,24 +71,21 @@ export default {
   data () {
     return {
       uploadAction: '',
-      processNum: 0,
       head: {},
       uploadHead: {},
-      needTabel: [],
-      table: [],
+      needTabel: [], // 待解析的总表
+      table: [], // 选中的待解析的表
       multipleSelection: [],
-      fileList: [],
-      isloading: false,
-      currentPageData: [],
-      pageNum: 0
+      fileList: [], // 被选取文件
+      isloading: false, // 解析是否正在经行
+      currentPageData: [], // 当前分页数据
+      pageNum: 0// 分页编号
     }
   },
   destroyed () {
     this.needTabel = []
   },
   created () {
-    console.log('这是create blkinput 函数')
-    console.log('created first')
     if (sessionStorage.getItem('pname')) {
       this.setpname_prom(sessionStorage.getItem('pname'))
     }
@@ -110,6 +102,7 @@ export default {
       heads
     ).then((response) => {
       this.needTabel = response
+      this.total = this.needTabel.length
       // 刚打开页面时加载前10项、且自动生成分页数量
       this.handleCurrentChange(1)
       this.initPageNum()
@@ -155,15 +148,11 @@ export default {
       console.log('这是send 函数')
     },
     dbInput () {
-      console.log('dbInput')
       this.isloading = true
       var tables = []
       for (var key in this.multipleSelection) {
         tables.push(this.multipleSelection[key].title)
-        console.log(this.multipleSelection[key].title)
       }
-      console.log('filetype')
-      console.log(this.head)
       this.$http.post(this.user.httppath + '/api/Bulkcm/BulkParse',
         { tableName: tables },
         { headers: this.head }
@@ -181,12 +170,9 @@ export default {
           message: error,
           type: 'warning'
         })
-        console.log('函数 dbInput error')
-        console.log(error)
       })
     },
     submitUpload () {
-      console.log('这是函数 submitUpload')
       if (this.prom.prom_pname === 'default') {
         this.$notify({
           title: '警告',
@@ -216,8 +202,9 @@ export default {
       }
     },
     handleSelectionChange (val) {
+      console.log('handleSelectionChange 函数')
+      console.log(val)
       this.multipleSelection = val
-      console.log(this.multipleSelection)
     }
   }
 }

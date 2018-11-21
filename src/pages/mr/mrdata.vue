@@ -14,11 +14,10 @@
                  @node-click="handleNodeClick">
           ref="tree2">
         </el-tree>
-
-        <export-table :tableData="data_list"></export-table>
       </el-aside>
       <el-container>
         <el-main>
+          <export-table :tableData="data_list"></export-table>
           <el-table :data="data_list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                     style="width: 100%">
             <el-table-column :label="key"
@@ -32,7 +31,7 @@
           </el-table>
         </el-main>
         <el-footer>
-          <diV style="text-align: left">
+          <div style="text-align: left">
             <el-pagination @size-change="handleSizeChange"
                            @current-change="handleCurrentChange"
                            :current-page.sync="currentPage"
@@ -128,7 +127,6 @@ export default {
         this.headers
       ).then((response) => {
         console.log(response)
-        // this.data_list = JSON.parse(response)
         this.data_list = response
         this.total = this.data_list.length
       }).catch((error) => {
@@ -137,8 +135,6 @@ export default {
     },
     filterNode (value, data) {
       if (!value) return true
-      console.log(value)
-      console.log(data)
       return data.label.indexOf(value) !== -1
     },
     handleSizeChange (val) {
@@ -148,7 +144,6 @@ export default {
     handleCurrentChange (currentPage) {
       // 当前页面该改变时发生
       this.currentPage = currentPage
-      console.log(`当前页: ${currentPage}`)
     }
   },
   watch: {

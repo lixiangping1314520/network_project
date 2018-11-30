@@ -1,10 +1,10 @@
 <template>
   <el-container>
-    <el-aside width="500px">
+    <el-main>
+      <!-- <el-aside width="500px"> -->
       <br>
       <br>
-      <el-upload class="elmro"
-                 ref="uploadUmts"
+      <el-upload ref="uploadUmts"
                  :action="uploadAciton"
                  :headers="uploadHead"
                  :data="gsmDate"
@@ -22,8 +22,7 @@
              class="el-upload__tip">支持.txt格式的文件</div>
       </el-upload>
       <br>
-      <el-upload class="elmro"
-                 ref="uploadLte"
+      <el-upload ref="uploadLte"
                  :action="uploadAciton"
                  :headers="uploadHead"
                  :data="lteDate"
@@ -41,8 +40,7 @@
              class="el-upload__tip">支持.txt格式的文件</div>
       </el-upload>
       <br>
-      <el-upload class="elmro"
-                 ref="uploadCell"
+      <el-upload ref="uploadCell"
                  :action="uploadAciton"
                  :headers="uploadHead"
                  :on-preview="handlePreviewCell"
@@ -59,13 +57,14 @@
              class="el-upload__tip">支持.csv格式的文件</div>
 
       </el-upload>
-      <el-button style="margin-left: 200px;"
-                 size="small"
+      <!-- style="margin-left: 200px;" -->
+      <el-button size="small"
                  type="success"
                  @click="submitUpload">上传到服务器</el-button>
+      <a @click="down">模板下载 </a>
       <br>
-    </el-aside>
-    <el-main>
+      <!-- </el-aside>
+    <el-main> -->
       <div style="margin-left: 200px;">参数设置</div>
       <el-tabs v-model="activeName"
                type="card"
@@ -160,6 +159,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import fileDownload from '../../basic/fileDownload.js'
 export default {
   computed: {
     ...mapState({
@@ -208,11 +208,16 @@ export default {
     this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln' }
     this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neipaln', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAciton = this.user.httppath + '/api/NeiPlan/Upload'
-    this.gsmDate = {'neifiletype': 'umts'}
-    this.lteDate = {'neifiletype': 'lte'}
+    this.gsmDate = { 'neifiletype': 'umts' }
+    this.lteDate = { 'neifiletype': 'lte' }
   },
   methods: {
     ...mapMutations(['setpname_prom']),
+    down () {
+      var url = this.user.httppath + '/api/FileDown/Download'
+      var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'neiplan' }
+      fileDownload(url, head)
+    },
     analysis () {
       if (this.prom.prom_pname === 'default') {
         this.$notify({

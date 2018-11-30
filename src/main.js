@@ -90,7 +90,7 @@ Axios.interceptors.request.use(config => {
 // 接口错误拦截
 Axios.interceptors.response.use(
   res => {
-    // console.log(res)
+    console.log('返回值')
     console.log(res)
     if (res.status === 401) {
       app &&
@@ -102,6 +102,8 @@ Axios.interceptors.response.use(
       sessionStorage.removeItem('user')
       router.push({ name: 'login' })
       return Promise.reject(new Error('身份过期'))
+    } else if (res.headers.hasOwnProperty('content-disposition')) {
+      return res
     } else {
       return res.data
     }

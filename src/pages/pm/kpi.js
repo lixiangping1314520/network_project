@@ -2039,7 +2039,7 @@ const kpi = {
       }
     ]
   },
-  nbiot: {
+  'nbiot': {
     资源负荷: [
       {
         kpiC: 'NB-IoT小区最大RRC连接用户数',

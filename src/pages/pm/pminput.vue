@@ -6,33 +6,43 @@
       <el-upload class="elmro"
                  ref="upload"
                  :action="uploadAction"
-                 :on-preview="handlePreview"
                  :headers="uploadHead"
+                 :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
                  :auto-upload="false"
                  :limit="1000"
-                 :multiple="true">
+                 :multiple="true"
+                 accept=".xml, .zip">
         <el-button slot="trigger"
-                   size="mini"
+                   size="small"
                    type="primary">选取文件</el-button>
         <div slot="tip"
-             class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
+             class="el-upload__tip">支持zip,xml格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="mini"
+                   size="small"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
+        <!-- <el-button slot="trigger"
+                   size="small"
+                   type="primary"选取文件</el-button>
+        <el-button style="margin-left: 10px;"
+                   size="small"
+                   type="success"
+                   @click="submitUpload">上传到服务器</el-button> -->
       </el-upload>
+
     </el-aside>
     <el-aside>
       <br>
       <br>
       <el-button @click="analysis"
-                  size="mini"
-                  type="primary">解析</el-button>
-      <h1>解析进度</h1>
+                 size="mini"
+                 :loading="isloading"
+                 type="primary">解析</el-button>
+      <!-- <h1>解析进度</h1>
       <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress>
+                   :percentage=this.processNum></el-progress> -->
     </el-aside>
   </el-container>
 </template>
@@ -42,16 +52,32 @@ export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
-      user: (state) => state.user
-    })
+      user: (state) => state.user,
+      pm: (state) => state.pm
+    }),
+    getpmtype () {
+      var thisvalue = ''
+      if (this.pm.pm_typeNow === '3g rbs') {
+        thisvalue = 'PM_3G_RBS'
+      } else if (this.pm.pm_typeNow === '3g rnc') {
+        thisvalue = 'PM_3G_RNC'
+      } else if (this.pm.pm_typeNow === '4g') {
+        thisvalue = 'PM_4G'
+      } else {
+        thisvalue = 'PM_NBIoT'
+      }
+      return thisvalue
+    }
   },
+  // ...mapGetters(['getpmtype']),
   data () {
     return {
       processNum: 70,
       head: {},
       uploadHead: {},
       fileList: [],
-      uploadAction: ''
+      uploadAction: '',
+      isloading: false
     }
   },
   created: function () {
@@ -62,60 +88,44 @@ export default {
     window.addEventListener('beforeunload', () => {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
     })
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'pm' }
-    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'pm', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
-    this.uploadAction = this.user.httppath + 'api/Pm/Upload'
+    console.log(this.getpmtype)
+    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype, 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+    this.uploadAction = this.user.httppath + '/api/Pm/Upload'
+    console.log(this.head)
+    console.log(this.uploadHead)
   },
   methods: {
     ...mapMutations(['setpname_prom']),
-    analysis2 () {
-      var id = setInterval(() => {
-        var a = 100
-        console.log('定时器响应中')
-        if (a === 100) {
-          clearInterval(id)
-          console.log('定时器关闭')
-        }
-      }, 4000)
-    },
+    // analysis2 () {
+    //   var id = setInterval(() => {
+    //     var a = 100
+    //     console.log('定时器响应中')
+    //     if (a === 100) {
+    //       clearInterval(id)
+    //       console.log('定时器关闭')
+    //     }
+    //   }, 4000)
+    // },
     analysis () {
+      console.log(this.getpmtype)
       if (this.prom.prom_pname === 'default') {
         this.$notify({
           title: '警告',
           message: '没有权限对公有工程进行数据入库',
           type: 'warning'
         })
-        return
       }
-      // var heads = {headers: {'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr'}}
-      // 等待函数测试
-      // setTimeout(() => {
-      //   // console.log('函数 settime out')
-      // }, 5000)
-
-      // this.dbInput(heads)
-      var a = 0
-      var id = setInterval(() => {
-        // var a = this.processbar(heads)
-        console.log('2s 后执行')
-        a = a + 20
-        this.processNum = a
-        console.log(a)
-        //  console.log('定时器响应中')
-        if (a === 100) {
-          clearInterval(id)
-          console.log('定时器关闭')
-        }
-      }, 2000)
+      this.dbInput()
     },
     send () {
       console.log('这是send 函数')
     },
-    processbar (heads) {
+    processbar () {
       console.log('函数 processbar')
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
+      this.$http.post(this.user.httppath + '/api/api/Pm/Parse',
         {},
-        heads
+        { headers: this.head }
       ).then((response) => {
         console.log('函数 processbar 响应')
         console.log(response)
@@ -126,30 +136,31 @@ export default {
         console.log(error)
       })
     },
-    dbInput (heads) {
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
+    dbInput () {
+      this.isloading = true
+      this.$http.post(this.user.httppath + '/api/Pm/Parse',
         {},
-        heads
+        { headers: this.head }
       ).then((response) => {
+        this.isloading = false
+        this.$notify({
+          title: '成功',
+          message: '解析完成',
+          type: 'success'
+        })
         console.log('函数 dbInput success')
         console.log(response)
       }).catch((error) => {
+        this.isloading = false
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
+
         console.log('函数 dbInput error')
         console.log(error)
       })
-    },
-    myUpload () {
-      console.log('这是函数 myupload')
-      // this.$refs.upload.submit()
-      // this.$http.post('http://192.168.0.134:2861/api/Mr/Upload',
-      //   this.fileList
-      // ).then((response) => {
-      //   // this.data_list = JSON.parse(response)
-      //   // this.total = this.data_list.length
-      //   console.log(response)
-      // }).catch((error) => {
-      //   console.log(error)
-      // })
     },
     submitUpload () {
       console.log('这是函数 submitUpload')
@@ -173,6 +184,7 @@ export default {
       console.log(file)
     }
   }
+
 }
 </script>
 <style>

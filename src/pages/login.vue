@@ -118,7 +118,7 @@ export default {
           })
         } else {
           sessionStorage.setItem('pname', 'default')
-          console.log(sessionStorage.getItem('pname'))
+          console.log(res)
           this.login({
             username: this.username,
             password: this.password,

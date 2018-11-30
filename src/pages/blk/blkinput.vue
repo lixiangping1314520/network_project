@@ -3,6 +3,14 @@
     <el-aside width="500px">
       <br>
       <br>
+      <h3>待解析进数据库的表</h3>
+      <v-selectTable ref="seltab"
+                     :tableData='needTabel'
+                     :columns="columns"> </v-selectTable>
+    </el-aside>
+    <el-main>
+      <br>
+      <br>
       <el-upload class="elmro"
                  ref="upload"
                  :action="uploadAction"
@@ -24,34 +32,6 @@
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-      <el-table ref="multipleTable"
-                :data="currentPageData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                @selection-change="handleSelectionChange">
-        <el-table-column type="selection"
-                         width="30">
-        </el-table-column>
-        <el-table-column prop="title"
-                         label="表名"
-                         width="470"
-                         :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{ scope.row.title }}</template>
-        </el-table-column>
-      </el-table>
-      </div>
-      
-      <div class="pagination-wrapper">
-        <el-pagination layout="prev, pager, next"
-                       :total="pageNum"
-                       @current-change="handleCurrentChange">
-        </el-pagination>
-      </div>
-
-    </el-aside>
-    <el-main>
-      <br>
-      <br>
       <el-button type="primary"
                  :loading="isloading"
                  size="mini"
@@ -61,7 +41,11 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import selectTable from '../../basic/selectTable'
 export default {
+  components: {
+    'v-selectTable': selectTable
+  },
   computed: {
     ...mapState({
       prom: (state) => state.prom,
@@ -74,16 +58,12 @@ export default {
       head: {},
       uploadHead: {},
       needTabel: [], // 待解析的总表
-      table: [], // 选中的待解析的表
-      multipleSelection: [],
+      columns: { title: '名称' },
+      table: [], // 服务器端传入的带解析的表
+      multipleSelection: [], // 选中的带解析的表
       fileList: [], // 被选取文件
-      isloading: false, // 解析是否正在经行
-      currentPageData: [], // 当前分页数据
-      pageNum: 0// 分页编号
+      isloading: false // 解析是否正在经行
     }
-  },
-  destroyed () {
-    this.needTabel = []
   },
   created () {
     if (sessionStorage.getItem('pname')) {
@@ -103,37 +83,26 @@ export default {
     ).then((response) => {
       this.needTabel = response
       this.total = this.needTabel.length
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange(1)
-      this.initPageNum()
       for (let i = 0; i < response.length; i++) {
         if (response[i].isOk === 'True') {
           this.table.push(this.needTabel[i])
         }
       }
-      this.toggleSelection(this.table)
+      this.$refs.seltab.multipleSelection = this.table
+      // setTimeout(() => {
+      //   this.$refs.seltab.toggleSelection(this.table)
+      // }, 250)
     }).catch((error) => {
-      console.log(error)
+      this.$notify({
+        title: '警告',
+        message: error,
+        type: 'warning'
+      })
     })
-  },
-  mounted () {
-    setTimeout(() => {
-      this.toggleSelection(this.table)
-    }, 1000)
   },
   methods: {
     ...mapMutations(['setpname_prom']),
-    // 点击跳转页面，显示对应的数据
-    handleCurrentChange (pageIndex) {
-      // pageIndex = pageIndex || 1
-      let pageSize = 10
-      this.currentPageData = this.needTabel.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
-    },
-    initPageNum () {
-      this.pageNum = this.needTabel.length
-    },
     analysis () {
-      console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {
         this.$notify({
           title: '警告',
@@ -144,12 +113,10 @@ export default {
       }
       this.dbInput()
     },
-    send () {
-      console.log('这是send 函数')
-    },
     dbInput () {
       this.isloading = true
       var tables = []
+      this.multipleSelection = this.$refs.seltab.multipleSelection
       for (var key in this.multipleSelection) {
         tables.push(this.multipleSelection[key].title)
       }
@@ -185,27 +152,13 @@ export default {
     },
     handleRemove (file, fileList) {
       console.log('这是函数 handleRemove')
-      console.log(file)
-      console.log(fileList)
     },
     handlePreview (file) {
       console.log('这是函数 handlePreview')
-      console.log(file)
-    },
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
-    },
-    handleSelectionChange (val) {
-      console.log('handleSelectionChange 函数')
-      console.log(val)
-      this.multipleSelection = val
     }
+  },
+  destroyed () {
+    this.needTabel = []
   }
 }
 </script>

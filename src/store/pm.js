@@ -61,6 +61,19 @@ const getters = {
     }
     return thisvalue
   },
+  getpmtype: state => {
+    var thisvalue = ''
+    if (state.pm_typeNow === '3g rbs') {
+      thisvalue = 'PM_3G_RBS'
+    } else if (state.pm_typeNow === '3g rnc') {
+      thisvalue = 'PM_3G_RNC'
+    } else if (state.pm_typeNow === '4g') {
+      thisvalue = 'PM_4g'
+    } else {
+      thisvalue = 'PM_NBIoT'
+    }
+    return thisvalue
+  },
   getpm_kpitypety: state => {
     var thisvalue = []
     if (state.pm_typeNow === '3g rbs') {

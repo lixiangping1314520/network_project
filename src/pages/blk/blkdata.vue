@@ -66,8 +66,6 @@ export default {
     exportTable
   },
   destroyed () {
-    // this.tables = []
-    // this.result = []
   },
   data () {
     return {

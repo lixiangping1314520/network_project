@@ -1,107 +1,35 @@
 <template>
   <el-container>
-    <el-aside width="500px">
-      <el-table :highlight-current-row="true"
-                :data="currentPageData_1"
-                style="width: 100%">
-        <el-table-column :label="key"
-                         v-for="(date, key) in currentPageData_1[0]"
-                         :key="key"
-                         :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{scope.row[key]}}
-          </template>
-        </el-table-column>
-        <!-- </el-table-column>        
-        <el-table-column 
-          :show-overflow-tooltip="true"
-          prop="MOC_Name"
-          label="MOC_Name">
-        </el-table-column>
-        <el-table-column 
-          :show-overflow-tooltip="true"
-          prop="Param_Name"
-          label="Param_Name">
-        </el-table-column>
-         <el-table-column 
-          :show-overflow-tooltip="true"
-          prop="Para_Description"
-          label="Para_Description">
-        </el-table-column> 
-         <el-table-column 
-          :show-overflow-tooltip="true"
-          prop="Baseline_Value"
-          label="Baseline_Value">
-        </el-table-column> -->
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini"
-                       @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini"
-                       type="danger"
-                       @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="pagination-wrapper">
-        <el-pagination layout="prev, pager, next"
-                       :total="pageNum_1"
-                       :pager-count="5"
-                       :page-size="7"
-                       @current-change="handleCurrentChange_1">
-        </el-pagination>
-      </div>
-
-    </el-aside>
     <el-main>
-      <el-button type="primary"
-                 size="mini"
-                 @click="addrow">新增</el-button>
-      <el-form v-show="updatashow"
-               ref="form"
-               :model="form"
-               label-width="110px">
-        <el-form-item label="CATEGORY:">
-          <el-input v-model="form.CATEGORY"></el-input>
-        </el-form-item>
-        <el-form-item label="CELLTYPE2:">
-          <el-input v-model="form.CELLTYPE2"></el-input>
-        </el-form-item>
-        <el-form-item label="FILTER:">
-          <el-input v-model="form.FILTER"></el-input>
-        </el-form-item>
-        <el-form-item label="MONAME:">
-          <el-input v-model="form.MONAME"></el-input>
-        </el-form-item>
-        <el-form-item label="MOVALUE:">
-          <el-input v-model="form.MOVALUE"></el-input>
-        </el-form-item>
-        <el-form-item label="PARANAME:">
-          <el-input v-model="form.PARANAME"></el-input>
-        </el-form-item>
-        <el-form-item label="RECOMMENDEDVALUE:">
-          <el-input v-model="form.RECOMMENDEDVALUE"></el-input>
-        </el-form-item>
-        <el-form-item label="VERSION:">
-          <el-input v-model="form.VERSION"></el-input>
-        </el-form-item>
-        <el-button type="primary"
+      <br>
+      <el-upload class="elmro"
+                 ref="upload"
+                 :action="uploadAction"
+                 :headers="uploadHead"
+                 :on-preview="handlePreview"
+                 :on-remove="handleRemove"
+                 :file-list="fileList"
+                 :auto-upload="false"
+                 :limit="1"
+                 :multiple="true"
+                 accept=".csv,">
+        <el-button slot="trigger"
                    size="mini"
-                   @click="onSubmit(selectrow)">确认</el-button>
-        <el-button type="primary"
+                   type="primary">选取核查表</el-button>
+
+        <div slot="tip"
+             class="el-upload__tip">支持.csv格式的文件</div>
+        <el-button style="margin-left: 10px;"
                    size="mini"
-                   @click="cancel()">取消</el-button>          
-      </el-form>
+                   type="success"
+                   @click="submitUpload">上传到服务器</el-button>
+        <a @click="down">模板下载 </a>
+      </el-upload>
       <el-button type="primary"
                  :loading="isloading"
                  size="mini"
                  @click="save">解析</el-button>
-      <export-table :tableData="oneTable"></export-table>
+      <v-exportTable :tableData="oneTable"></v-exportTable>
       <el-form :inline="true"
                class="demo-form-inline"
                style="margin-top: 10px">
@@ -116,34 +44,16 @@
           </el-select>
         </el-form-item>
       </el-form>
-
-      <el-table :highlight-current-row="true"
-                :data="currentPageData_2">
-        <el-table-column :label="key"
-                         v-for="(date, key) in currentPageData_2[0]"
-                         :key="key"
-                         :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{scope.row[key]}}
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="pagination-wrapper">
-        <el-pagination layout="prev, pager, next"
-                       :total="pageNum_2"
-                       :pager-count="5"
-                       :page-size="7"
-                       @current-change="handleCurrentChange_2">
-        </el-pagination>
-      </div>
-
+      <v-pageTable :tableData="oneTable">
+      </v-pageTable>
     </el-main>
   </el-container>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
 import exportTable from '../../basic/exportTable'
+import fileDownload from '../../basic/fileDownload.js'
+import pageTable from '../../basic/pageTable.vue'
 export default {
   computed: {
     ...mapState({
@@ -152,37 +62,19 @@ export default {
     })
   },
   components: {
-    exportTable
+    'v-exportTable': exportTable,
+    'v-pageTable': pageTable
   },
   data () {
     return {
-      height: '',
       headers: {},
       tables: [],
-      form: {
-        'CATEGORY': '',
-        'CELLTYPE2': '',
-        'FILTER': '',
-        'MONAME': '',
-        'MOVALUE': '',
-        'PARANAME': '',
-        'RECOMMENDEDVALUE': '',
-        'VERSION': ''
-      },
-      selectrow: -1,
-      resultTable: {},
+      fileList: [], // 上传的核查表
+      resultTable: {}, // 获取的dataset
       resultTableName: [{ 'tableName': '错误信息表' }, { 'tableName': '核查结果表' }],
-      oneTable: [],
-      updatashow: false,
+      oneTable: [], // 结果表
       isloading: false,
-
-      currentPageData_1: [],
-      pageNum_1: 0,
-      tableName: '',
-
-      currentPageData_2: [],
-      pageNum_2: 0
-
+      tableName: ''
     }
   },
   created () {
@@ -195,111 +87,34 @@ export default {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
     })
     this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' } }
-    this.$http.post(this.user.httppath + '/api/Bulkcm/CheckCfg',
-      {},
-      this.headers
-    ).then((response) => {
-      console.log(response)
-      this.tables = response
-
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange_1(1)
-      this.initPageNum_1()
-    }).catch((error) => {
-      console.log(error)
-    })
-  },
-  mounted () {
-    console.log(document.getElementsByClassName('el-container is-vertical')[0].offsetHeight)
-    this.height = document.getElementsByClassName('el-container is-vertical')[0].offsetHeight - 100 + 'px'
+    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+    this.uploadAction = this.user.httppath + '/api/Bulkcm/CheckUpload'
   },
   methods: {
     ...mapMutations(['setpname_prom']),
-    // 点击跳转页面，显示对应的数据
-    handleCurrentChange_1 (pageIndex) {
-      // pageIndex = pageIndex || 1
-      let pageSize = 7
-      this.currentPageData_1 = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
+    down () {
+      var url = this.user.httppath + '/api/FileDown/Download'
+      var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'bulkcm' }
+      fileDownload(url, head)
     },
-    initPageNum_1 () {
-      this.pageNum_1 = this.tables.length
+    handleRemove (file, fileList) {
+      console.log('这是函数 handleRemove')
+      console.log(file)
+      console.log(fileList)
     },
-    handleCurrentChange_2 (pageIndex) {
-      // pageIndex = pageIndex || 1
-      let pageSize = 7
-      this.currentPageData_2 = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
-    },
-    initPageNum_2 () {
-      this.pageNum_2 = this.oneTable.length
-
-      console.log(this.pageNum_2)
-    },
-
-    handleEdit (index, row) {
-      this.updatashow = true
-      this.selectrow = index
-      this.form['CATEGORY'] = this.tables[index]['CATEGORY']
-      this.form['CELLTYPE2'] = this.tables[index]['CELLTYPE2']
-      this.form['FILTER'] = this.tables[index]['FILTER']
-      this.form['MONAME'] = this.tables[index]['MONAME']
-      this.form['MOVALUE'] = this.tables[index]['MOVALUE']
-      this.form['PARANAME'] = this.tables[index]['PARANAME']
-      this.form['RECOMMENDEDVALUE'] = this.tables[index]['RECOMMENDEDVALUE']
-      this.form['VERSION'] = this.tables[index]['VERSION']
-      console.log(index, row)
-    },
-    handleDelete (index, row) {
-      console.log('这是删除函数')
-      console.log(index, row)
-      this.tables.splice(index, 1)
-    },
-    addrow () {
-      this.updatashow = true
-      this.selectrow = -1
-      this.form['CATEGORY'] = ''
-      this.form['CELLTYPE2'] = ''
-      this.form['FILTER'] = ''
-      this.form['MONAME'] = ''
-      this.form['MOVALUE'] = ''
-      this.form['PARANAME'] = ''
-      this.form['RECOMMENDEDVALUE'] = ''
-      this.form['VERSION'] = ''
-    },
-    onSubmit (row) {
-      if (row !== -1) {
-        console.log(this.tables[row])
-        this.tables[row]['CATEGORY'] = this.form['CATEGORY']
-        this.tables[row]['CELLTYPE2'] = this.form['CELLTYPE2']
-        this.tables[row]['FILTER'] = this.form['FILTER']
-        this.tables[row]['MONAME'] = this.form['MONAME']
-        this.tables[row]['MOVALUE'] = this.form['MOVALUE']
-        this.tables[row]['PARANAME'] = this.form['PARANAME']
-        this.tables[row]['RECOMMENDEDVALUE'] = this.form['RECOMMENDEDVALUE']
-        this.tables[row]['VERSION'] = this.form['VERSION']
-      } else {
-        this.tables.push(this.form)
-      }
-      this.updatashow = false
-    },
-    cancel () {
-      this.form['CATEGORY'] = ''
-      this.form['CELLTYPE2'] = ''
-      this.form['FILTER'] = ''
-      this.form['MONAME'] = ''
-      this.form['MOVALUE'] = ''
-      this.form['PARANAME'] = ''
-      this.form['RECOMMENDEDVALUE'] = ''
-      this.form['VERSION'] = ''
-      this.updatashow = false
+    handlePreview (file) {
+      console.log('这是函数 handlePreview')
+      console.log(file)
     },
     save () {
       this.isloading = true
       this.$http.post(this.user.httppath + '/api/Bulkcm/ParamCheck',
-        this.tables,
+        {},
         this.headers
       ).then((response) => {
         this.resultTable = response
         this.isloading = false
+        console.log('这是response')
         console.log(response)
         this.$notify({
           title: '成功',
@@ -307,32 +122,25 @@ export default {
           type: 'success'
         })
       }).catch((error) => {
-        console.log(error)
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
       })
     },
-    // handleRowChange (row) {
-    //   console.log(row)
-    //   console.log(this.resultTable)
-    //   if (row['tableName'] === '错误信息表') {
-    //     this.oneTable = this.resultTable['错误信息表']
-    //   } else {
-    //     // console.log()
-    //     this.oneTable = this.resultTable['核查结果表']
-    //   }
-    //   console.log(this.oneTable)
-    // },
+    submitUpload () {
+      this.$refs.upload.submit()
+    },
     changeTableName () {
-      console.log(this.tableName)
-      if (this.tableName === '错误信息表') {
-        this.oneTable = this.resultTable['错误信息表']
-      } else {
-        // console.log()
-        this.oneTable = this.resultTable['核查结果表']
+      // console.log(this.resultTable)
+      if (Object.keys(this.resultTable).length !== 0) {
+        if (this.tableName === '错误信息表') {
+          this.oneTable = this.resultTable['错误信息表']
+        } else {
+          this.oneTable = this.resultTable['核查结果表']
+        }
       }
-
-      // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange_2(1)
-      this.initPageNum_2()
     }
   }
 }

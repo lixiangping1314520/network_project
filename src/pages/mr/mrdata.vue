@@ -11,8 +11,8 @@
                  :props="defaultProps"
                  default-expand-all
                  :filter-node-method="filterNode"
-                 @node-click="handleNodeClick">
-          ref="tree2">
+                 @node-click="handleNodeClick"
+                 ref="tree2">
         </el-tree>
       </el-aside>
       <el-container>
@@ -166,8 +166,8 @@ export default {
   color: #333;
 }
 
-.filter-tree{
+.filter-tree {
   height: 400px;
-  overflow-y: scroll; 
+  overflow-y: scroll;
 }
 </style>

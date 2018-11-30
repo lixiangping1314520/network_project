@@ -13,42 +13,22 @@
                  icon="el-icon-search"
                  size="mini"
                  @click="output()">导出</el-button>
+      <el-button type="primary"
+                 icon="el-icon-search"
+                 size="mini"
+                 :loading="isloading"
+                 @click="getkpi()">解析</el-button>
       </br> </br>
     </el-header>
     <el-main>
       <el-container>
         <el-aside width="300px">
-          <el-table @row-click="handleRowChange"
-                    :highlight-current-row="true"
-                    :data="pmData"
-                    style="width: 300px">
-            <el-table-column prop="kpiE"
-                             label="kpi 名称">
-            </el-table-column>
-          </el-table>
-
-          <div class="pagination-wrapper">
-            <el-pagination layout="prev, pager, next"
-                           :pager-count="5"
-                           :total="initPageNum"
-                           :page-size="7"
-                           @current-change="handleCurrentChange">
-            </el-pagination>
-          </div>
-
+          <v-selectTable ref='kpitable'
+                         :tableData="pmData"
+                         :columns="pmDataColums"> </v-selectTable>
+          <!-- @muEvent="test" -->
         </el-aside>
         <el-main>
-          <table border="0.5">
-            <tr>
-              <th>kpi 中文名称 : {{rowDate.kpiC}}</th>
-            </tr>
-            <tr>
-              <th>kpi 英文名称 : {{rowDate.kpiE}}</th>
-            </tr>
-            <tr>
-              <th>kpi 计算公式 : {{rowDate.counter}}</th>
-            </tr>
-          </table>
           <el-main>
             <el-table :data="result"
                       style="width: 100%">
@@ -69,24 +49,54 @@
 <script>
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import outputTable from '../../basic/outputTable.js'
+import selectTable from '../../basic/selectTable.vue'
 export default {
+  components: {
+    'v-selectTable': selectTable
+  },
   computed: {
+    ...mapGetters(['getpm_kpitypety']),
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user,
       pm: (state) => {
         return state.pm
-      }
+      },
+      pmTypeNow: (state) => state.pm.pm_typeNow
     }),
-    ...mapGetters(['getpm_kpitypety']),
     initPageNum () {
-      // this.pageNum = this.pm.pm_kpivalues.length
       return this.pm.pm_kpivalues.length
+    },
+    getpmtype () {
+      var thisvalue = ''
+      if (this.pm.pm_typeNow === '3g rbs') {
+        thisvalue = 'PM_3G_RBS'
+      } else if (this.pm.pm_typeNow === '3g rnc') {
+        thisvalue = 'PM_3G_RNC'
+      } else if (this.pm.pm_typeNow === '4g') {
+        thisvalue = 'PM_4G'
+      } else {
+        thisvalue = 'PM_NBIoT'
+      }
+      return thisvalue
     }
+    // mrtype () {
+    //   var mrtype = ''
+    //   if (this.pm.pm_typeNow === '3g rbs') {
+    //     mrtype = 'PM_3G_RBS'
+    //   } else if (this.pm.pm_typeNow === '3g rnc') {
+    //     mrtype = 'PM_3G_RNC'
+    //   } else if (this.pm.pm_typeNow === '4g') {
+    //     mrtype = 'PM_4G'
+    //   } else {
+    //     mrtype = 'PM_NBIoT'
+    //   }
+    //   return mrtype
+    // }
   },
   data () {
     return {
-      result: [],
+      result: [], // 结果表
       rowDate: {},
       kpitypety: [
         { name: '接入' },
@@ -94,7 +104,8 @@ export default {
         { name: '切换' },
         { name: '话务量' }
       ],
-      kpiType: '接入',
+      kpiType: '接入', // kpi所属类型
+      kpiType_en: '',
       kpiTable2: [],
       kpiTable: [{
         kpiC: 'RNC 建立连接请求次数',
@@ -107,8 +118,9 @@ export default {
         counter: 'pmRrcConnEstabAtt - pmRrcConnEstabAttReatt',
         isCalculate: false
       }],
-      pmData: [],
-      pageNum: 0
+      pmData: [], // 某一类KPI指标列表
+      pmDataColums: { kpiC: '中文名称' },
+      isloading: false
     }
   },
   created () {
@@ -124,53 +136,70 @@ export default {
     ...mapMutations(['setpm_kpivules', 'setpname_prom']),
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
-      // pageIndex = pageIndex || 1
-      let pageSize = 7
-      this.pmData = this.pm.pm_kpivalues.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
-      console.log(this.pmData)
+      this.pmData = this.pm.pm_kpivalues
     },
     typeChange () {
       console.log('typeChange 切换类型函数')
       this.setpm_kpivules(this.kpiType)
       this.handleCurrentChange(1)
       console.log(this.kpiType)
+      this.$refs.kpitable.multipleSelection = []
     },
     output () {
-      // var du = [{name: '1', id: '2'},{name: '1', id: '2'}]
-      // outputTable(du)
       if (this.result.length !== 0) {
         outputTable(this.result)
       }
     },
-    handleSelectionChange () {
-      console.log('handleSelectionChange 函数')
-    },
-    handleRowChange (row) {
-      console.log('这是 函数handleRowChange')
-      // console.log(row)
-      this.rowDate = row
-      var mrtype = ''
-      if (this.pm.pm_typeNow === '3g rbs') {
-        mrtype = 'PM_3G_RBS'
-      } else if (this.pm.pm_typeNow === '3g rnc') {
-        mrtype = 'PM_3G_RNC'
-      } else if (this.pm.pm_typeNow === '4g') {
-        mrtype = 'PM_4G'
-      } else {
-        mrtype = 'PM_NBIoT'
+    getkpi () {
+      var kpinames = []
+      console.log('这是getkpi 函数')
+      console.log(this.$refs.kpitable.multipleSelection)
+      var qwe = this.$refs.kpitable.multipleSelection
+      for (let index in qwe) {
+        kpinames.push(qwe[index]['kpiE'])
       }
-      var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': mrtype } }
-      // var mr = ['MRO', 'MRE', 'MRS']
-      var params = { 'kpiName': row.kpiE, 'kpiType': this.kpiType }
+      var params = [{ 'kpiName': kpinames, 'kpiType': this.kpiType_en }]
+      var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
+      console.log(head)
+      this.isloading = true
       this.$http.post(this.user.httppath + '/api/Pm/GetKpiData',
         params,
-        headers
+        { headers: head }
       ).then((response) => {
-        console.log(response)
         this.result = response
+        this.$notify({
+          title: '成功',
+          message: '解析成功',
+          type: 'success'
+        })
+        this.isloading = false
       }).catch((error) => {
-        console.log(error)
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
+        this.isloading = false
       })
+    }
+  },
+  watch: {
+    pmTypeNow (val) {
+      this.pmData = []
+      this.$refs.kpitable.multipleSelection = []
+    },
+    kpiType (val) {
+      if (val === '接入') {
+        this.kpiType_en = 'Integrity'
+      } else if (val === '掉话') {
+        this.kpiType_en = 'Mobility'
+      } else if (val === '切换') {
+        this.kpiType_en = 'Retainability'
+      } else if (val === '话务量') {
+        this.kpiType_en = 'Accessibility'
+      } else {
+        this.kpiType_en = val
+      }
     }
   }
 }

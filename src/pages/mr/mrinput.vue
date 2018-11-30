@@ -1,6 +1,7 @@
 <template>
   <el-container>
     <el-aside width="500px">
+      <button @click="btn3()">文件下载3</button>
       <br>
       <br>
       <el-upload class="elmro"
@@ -97,10 +98,20 @@ export default {
       ).then((response) => {
         console.log('函数 processbar 响应')
         console.log(response)
+        this.$notify({
+          title: '成功',
+          message: '解析成功',
+          type: 'success'
+        })
         return response
       }).catch((error) => {
         console.log('函数 processbar 响应 失败')
         console.log('error')
+        this.$notify({
+          title: '警告',
+          message: error,
+          type: 'warning'
+        })
         console.log(error)
       })
     },

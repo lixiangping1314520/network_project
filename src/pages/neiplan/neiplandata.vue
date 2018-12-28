@@ -98,7 +98,6 @@ export default {
         this.oneTable = []
       }
     }
-
   },
   methods: {
     ...mapMutations(['setpname_prom']),

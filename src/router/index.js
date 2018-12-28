@@ -13,8 +13,8 @@ const pm = name => () => import('@/pages/pm/' + name)
 const blk = name => () => import('@/pages/blk/' + name)
 const kget = name => () => import('@/pages/kget/' + name)
 const cmal = name => () => import('@/pages/cmal/' + name)
-const neiplan = name => () => import('@/pages/neiplan/' + name)
-const expansion = name => () => import('@/pages/expansion/' + name)
+// const neiplan = name => () => import('@/pages/neiplan/' + name)
+// const expansion = name => () => import('@/pages/expansion/' + name)
 const prob = name => () => import('@/pages/netproblocation/' + name)
 
 export default new Router({
@@ -144,50 +144,52 @@ export default new Router({
             }
           ]
         },
-        {
-          // 邻区规划
-          path: '/neiplanside',
-          name: 'neiplanside',
-          redirect: '/neiplanside/neiplaninput',
-          component: neiplan('neiplanside'),
-          children: [
-            {
-              path: '/neiplanside/neiplaninput',
-              name: 'neiplaninput',
-              component: neiplan('neiplaninput')
-            },
-            {
-              path: '/neiplanside/neiplandata',
-              name: 'neiplandata',
-              component: neiplan('neiplandata')
-            }
-          ]
-        },
+        { path: '/neiplan', name: 'neiplan', component: page('neiplan/neiplan') },
+        // {
+        //   // 邻区规划
+        //   path: '/neiplanside',
+        //   name: 'neiplanside',
+        //   redirect: '/neiplanside/neiplaninput',
+        //   component: neiplan('neiplanside'),
+        //   children: [
+        //     {
+        //       path: '/neiplanside/neiplaninput',
+        //       name: 'neiplaninput',
+        //       component: neiplan('neiplaninput')
+        //     },
+        //     {
+        //       path: '/neiplanside/neiplandata',
+        //       name: 'neiplandata',
+        //       component: neiplan('neiplandata')
+        //     }
+        //   ]
+        // },
         {
           // 地理化呈现
           path: '/bmap',
           name: 'bmap',
           component: page('bmap/bmap')
         },
-        {
-          // 扩容
-          path: '/expside',
-          name: 'expside',
-          redirect: '/expside/expinput',
-          component: expansion('expside'),
-          children: [
-            {
-              path: '/expside/expinput',
-              name: 'expinput',
-              component: expansion('expinput')
-            },
-            {
-              path: '/expside/expdata',
-              name: 'expdata',
-              component: expansion('expdata')
-            }
-          ]
-        },
+        { path: '/expansion', name: 'expansion', component: page('expansion/expansion') },
+        // {
+        //   // 扩容
+        //   path: '/expside',
+        //   name: 'expside',
+        //   redirect: '/expside/expinput',
+        //   component: expansion('expside'),
+        //   children: [
+        //     {
+        //       path: '/expside/expinput',
+        //       name: 'expinput',
+        //       component: expansion('expinput')
+        //     },
+        //     {
+        //       path: '/expside/expdata',
+        //       name: 'expdata',
+        //       component: expansion('expdata')
+        //     }
+        //   ]
+        // },
         {
           // 网络问题定位
           path: '/netprob',

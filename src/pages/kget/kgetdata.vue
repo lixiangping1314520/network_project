@@ -1,6 +1,7 @@
 <template>
   <el-container>
     <el-header>
+      <br>
       <export-table :tableData="result"></export-table>
     </el-header>
     <el-main>
@@ -38,6 +39,7 @@
                 </template>
               </el-table-column>
             </el-table>
+            </div>
           </el-main>
         </el-main>
       </el-container>

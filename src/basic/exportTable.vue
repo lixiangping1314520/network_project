@@ -1,7 +1,11 @@
 <template>
-	<div class="output-table">
-		<el-button type="primary" size="mini" :disabled="isOutputTable" @click.prevent="outputTable">导出</el-button>
-	</div>
+  <div class="output-table">
+    <el-button type="primary"
+               size="mini"
+               :disabled="isOutputTable"
+               style="width:80px"
+               @click.prevent="outputTable">导出</el-button>
+  </div>
 </template>
 <script type="text/javascript">
 export default {
@@ -50,7 +54,7 @@ export default {
 </script>
 
 <style type="text/css">
-	.output-table{
-		display: inline-block;
-  }
+.output-table {
+  display: inline-block;
+}
 </style>

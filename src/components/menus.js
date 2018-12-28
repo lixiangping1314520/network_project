@@ -25,7 +25,7 @@ const menus = [
     icon: 'fa fa-microchip',
     label: '网络规划',
     submenu: [
-      {id: 'b1', name: 'neiplanside', label: '邻区规划', icon: 'el-icon-date'},
+      {id: 'b1', name: 'neiplan', label: '邻区规划', icon: 'el-icon-date'},
       {id: 'b2', name: 'bmap', label: '地理化呈现', icon: 'el-icon-date'}
     ]
   },
@@ -43,7 +43,7 @@ const menus = [
     icon: 'fa fa-microchip',
     label: '网络优化',
     submenu: [
-      {id: 'c1', name: 'expside', label: '扩容', icon: 'el-icon-date'},
+      {id: 'c1', name: 'expansion', label: '扩容', icon: 'el-icon-date'},
       {id: 'c2', name: 'netprob', label: '网络问题定位', icon: 'el-icon-date'}
     ]
   }

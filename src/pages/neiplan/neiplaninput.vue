@@ -1,7 +1,6 @@
 <template>
   <el-container>
     <el-main>
-      <!-- <el-aside width="500px"> -->
       <br>
       <br>
       <el-upload ref="uploadUmts"

@@ -29,9 +29,30 @@
       <el-button type="primary"
                  :loading="isloading"
                  size="mini"
-                 @click="save">解析</el-button>
+                 style="width:80px; margin-left:2px"
+                 @click="analysis">解析</el-button>
+      <!-- <el-button type="primary"
+                 :loading="isloading"
+                 size="mini"
+                 @click="save">解析</el-button> -->
       <v-exportTable :tableData="oneTable"></v-exportTable>
       <el-form :inline="true"
+               class="demo-form-inline"
+               style="margin-top: 10px">
+        <el-form-item style="margin-bottom: 10px">
+          <el-select v-model="tableName"
+                     size="mini"
+                     placeholder="表名称"
+                     @change="changeTableName"
+                     style="width:200px">
+            <el-option v-for="item in resultTableName"
+                       :key="item.tableName"
+                       :label="item.tableName"
+                       :value="item.tableName">{{item.tableName}}</el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- <el-form :inline="true"
                class="demo-form-inline"
                style="margin-top: 10px">
         <el-form-item style="margin-bottom: 10px">
@@ -44,7 +65,7 @@
                        :value="item.tableName">{{item.tableName}}</el-option>
           </el-select>
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <v-pageTable :tableData="oneTable"> </v-pageTable>
     </el-main>
   </el-container>

@@ -1,10 +1,9 @@
 <template>
-  <el-container>
-    <el-aside width="500px">
-      <br>
-      <br>
-      <el-upload class="elmro"
-                 ref="upload"
+  <div style="padding-left:10px; text-align:center">
+    <br>
+    <br>
+    <div>
+      <el-upload ref="upload"
                  action="uploadAction"
                  :headers="uploadHead"
                  :on-preview="handlePreview"
@@ -24,19 +23,14 @@
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-    </el-aside>
-    <el-aside>
-      <br>
-      <br>
-      <el-button type="primary"
-                 :loading="isloading"
-                 size="mini"
-                 @click="analysis">解析</el-button>
-      <!-- <h1>解析进度</h1>
-      <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress> -->
-    </el-aside>
-  </el-container>
+    </div>
+    <br>
+    <el-button type="primary"
+               :loading="isloading"
+               size="mini"
+               style="width:80px; margin-left:2px"
+               @click="analysis">解析</el-button>
+  </div>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
@@ -83,16 +77,6 @@ export default {
         return
       }
       this.dbInput()
-      // var id = setInterval(() => {
-      //   console.log('2s 后执行')
-      //   this.i = this.processbar()
-      //   console.log(this.processNum)
-      //   //  console.log('定时器响应中')
-      //   if (this.processNum === 100) {
-      //     clearInterval(id)
-      //     console.log('定时器关闭')
-      //   }
-      // }, 2000)
     },
     send () {
       console.log('这是send 函数')

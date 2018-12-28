@@ -8,7 +8,7 @@
       </v-menu>
     </el-aside>
     <el-container>
-      <router-view></router-view>
+      <router-view ></router-view>
     </el-container>
   </el-container>
 </template>

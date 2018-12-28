@@ -1,7 +1,6 @@
 <template>
   <el-container>
     <el-aside width="500px">
-      <button @click="btn3()">文件下载3</button>
       <br>
       <br>
       <el-upload class="elmro"

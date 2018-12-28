@@ -1,15 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="500px">
-      <br>
-      <br>
-      <h3>待解析进数据库的表</h3>
-      <v-selectTable ref="seltab"
-                     :tableData='needTabel'
-                     :columns="columns"> </v-selectTable>
-    </el-aside>
     <el-main>
-      <br>
       <br>
       <el-upload class="elmro"
                  ref="upload"
@@ -33,9 +24,22 @@
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
       <el-button type="primary"
+                 size="mini"
+                 style="width:80px; margin-left:2px"
+                 @click="parm">参数配置</el-button>
+      <el-button type="primary"
                  :loading="isloading"
                  size="mini"
+                 style="width:80px; margin-left:2px"
                  @click="analysis">解析</el-button>
+      <br>
+      <br>
+      <div v-if="isshow">
+        <h3>待解析进数据库的表</h3>
+        <v-selectTable ref="seltab"
+                       :tableData='needTabel'
+                       :columns="columns"> </v-selectTable>
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -62,7 +66,8 @@ export default {
       table: [], // 服务器端传入的带解析的表
       multipleSelection: [], // 选中的带解析的表
       fileList: [], // 被选取文件
-      isloading: false // 解析是否正在经行
+      isloading: false, // 解析是否正在经行
+      isshow: false
     }
   },
   created () {
@@ -102,6 +107,9 @@ export default {
   },
   methods: {
     ...mapMutations(['setpname_prom']),
+    parm () {
+      this.isshow = !this.isshow
+    },
     analysis () {
       if (this.prom.prom_pname === 'default') {
         this.$notify({

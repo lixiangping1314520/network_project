@@ -63,9 +63,13 @@ export default {
       appName: window.APP_INFO.appName
     }
   },
+  mounted(){
+    console.log(this.user);
+  },
   methods: {
     ...mapActions(['login']),
     handleLogin () {
+      console.log(1);
       if (!this.username || !this.password) {
         this.$notify({
           title: '警告',

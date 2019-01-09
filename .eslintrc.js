@@ -32,6 +32,10 @@ module.exports = {
      //空行最多不能超过100行
     "no-multiple-empty-lines": ['warn', {"max": 100}],
     //关闭禁止混用tab和空格
-    "no-mixed-spaces-and-tabs": ['warn']
+    "no-mixed-spaces-and-tabs": ['warn'],
+    "no-implicit-globals:": 0
+  },
+  globals:{
+    'config': true
   }
 }

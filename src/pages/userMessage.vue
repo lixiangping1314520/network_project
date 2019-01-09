@@ -1,6 +1,6 @@
 <template>
   <div class="fullscreen">
-    <div class="login-box">
+    <div class="register-box">
       <div style="text-align: center">
         <img src="../assets/logo.png"
              alt=""
@@ -16,12 +16,15 @@
           <span class="text">{{userMessage.email}}</span>
         </p>
       </div>
-      <el-button  type="primary" plain size="medium" class="back-btn" @click="backBtn">返回上一页</el-button>
+      <span class="back-btn" @click="backBtn">X</span>
+      <!-- <div style="text-align: center">
+        <el-button  type="primary" plain size="medium" class="back-btn" @click="backBtn">返回上一页</el-button>
+      </div> -->
     </div>
   </div>
 </template>
 <script>
-// import { mapState } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   name: 'userMessage',
   data () {
@@ -31,17 +34,17 @@ export default {
   },
   methods: {
     backBtn () {
-      this.$router.go(-1)
+      this.$emit('closeuserMessage')
     }
   },
   computed: {
-    // ...mapState({
-    //   user: (state) => state.user
-    // })
+    ...mapState({
+      user: (state) => state.user
+    })
   },
   created () {
     let username = JSON.parse(sessionStorage.getItem('user')).username
-    this.$http.post('http://192.168.0.237:2860/api/UserInfo/UserInfo', {
+    this.$http.post(this.user.httppath + '/api/UserInfo/UserInfo', {
       username: username
     }).then((res) => {
       this.userMessage = res
@@ -49,56 +52,59 @@ export default {
   }
 }
 </script>
-<style type="text/css">
-.m-list-group {
-  padding: 0;
-  margin: 0 0 20px;
-}
-.m-list-group .m-list-group-item {
-  position: relative;
-  display: block;
-  margin-bottom: -1px;
-  background-color: transparent;
-  margin-top: 10px;
-}
-.fullscreen {
-  position: absolute;
+<style scoped type="text/css">
+.fullscreen{
   width: 100%;
   height: 100%;
-  background: #f4f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(0,0,0,.4);
+  z-index: 56789
 }
-.login-box {
-  text-align: center;
+.register-box {
+  position: relative;
   width: 400px;
   margin: 0 auto;
-  padding: 0px 15px;
+  padding: 5px 30px;
+  background: white;
+  color: black;
 }
-.login-box .logo {
+.register-box .logo {
+  width: 100px;
+  height: 100px;
   max-width: 40%;
-  margin-bottom: 30px;
 }
 .user-content{
   font-size: 18px
 }
 .user-content p{
   display: flex;
+  margin: 0;
+  font-size: 16px;
 }
 .label{
-  display: inline-block;
   text-align: right;
-  width: 150px;
-  float: left;
+  width: 100px;
 
 }
 .text{
   display: inline-block;
-  margin-left: 5%
+  margin-left: 5%;
+  flex: 1;
 }
 .back-btn{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  position: absolute;
   font-size: 16px;
+  border: 1px solid gray;
+  cursor: pointer;
+  top: 1px;
+  right: 1px;
 }
 @media (max-width: 768px) {
   .login-box {

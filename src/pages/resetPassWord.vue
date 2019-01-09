@@ -1,12 +1,7 @@
 <template>
   <div class="fullscreen">
     <div class="register-box">
-      <div style="text-align: center">
-        <img src="../assets/logo.png"
-             alt=""
-             class="logo">
-      </div>
-      <p class="text-tips-header">你好，欢迎修改密码</p>
+      <p class="text-tips-header" >你好，欢迎修改密码</p>
       <form action=""
             class="login-form">
         <div class="m-list-group">
@@ -48,13 +43,14 @@
                 @click.prevent="handResetPassWord">确认修改</button>
         <p class="text-tips">放弃修改？</p>
         <a @click.prevent="discardChange"
-           class="m-btn m-btn-text">确认放弃修改？</a>
+           class="m-btn m-btn-text">取消</a>
       </form>
     </div>
   </div>
 </template>
 <script>
 // import {mapActions} from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'login',
   data () {
@@ -68,7 +64,7 @@ export default {
   methods: {
     discardChange () {
       // 返回上一个页面
-      window.history.back(-1)
+      this.$emit('closeReset')
     },
     // 判断用户名
     ueserNamePattern () {
@@ -137,12 +133,11 @@ export default {
         confirmPassword: this.confirmPassword,
         email: this.email
       }
-      console.log(userMessage)
-      this.$http.post('http://192.168.0.237:2860/api/WebUser/ResetPasswd', userMessage).then(res => {
+      this.$http.post(this.user.httppath + '/api/WebUser/ResetPasswd', userMessage).then(res => {
         console.log(res)
         if (res === '用户名和邮箱不匹配') {
           return this.$notify.error({
-            title: '输入信息不能为空',
+            title: '用户名和邮箱不匹配',
             message: '用户名或注册邮箱输入错误'
           })
         }
@@ -154,11 +149,16 @@ export default {
         sessionStorage.clear()
       })
     }
+  },
+  computed: {
+    ...mapState({
+      user: (state) => state.user
+    })
   }
 }
 </script>
 
-<style type="text/css">
+<style scoped type="text/css">
 .m-list-group {
   padding: 0;
   margin: 0 0 20px;
@@ -167,32 +167,31 @@ export default {
   position: relative;
   display: block;
   margin-bottom: -1px;
-  margin-top: 15px;
+  margin-top: 10px;
 }
-.fullscreen {
-  position: absolute;
+.fullscreen{
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(0,0,0,.4);
+  z-index: 56789
 }
 .register-box {
   position: relative;
   width: 400px;
   margin: 0 auto;
-  padding: 0px 15px;
+  padding: 0px 30px;
+  background: white
 }
-.register-box .logo {
-  max-width: 40%;
-  margin-bottom: 30px;
-}
-.register-box .text-tips-header {
+.text-tips-header {
   width: 100%;
   text-align: center;
-  color: #909db7;
+  color: black;
   display: inline-block;
-  font-size: 14px;
+  font-size: 16px;
+  margin: 0;
 }
 .register-box .text-tips {
   text-align: center;
@@ -204,6 +203,7 @@ export default {
 .register-box .m-label {
   display: inline-block;
   width: 20%;
+  color: black;
   font-size: 14px;
 }
 .register-box .m-input {

@@ -90,8 +90,6 @@ Axios.interceptors.request.use(config => {
 // 接口错误拦截
 Axios.interceptors.response.use(
   res => {
-    console.log('返回值')
-    console.log(res)
     if (res.status === 401) {
       app &&
         app.$message({

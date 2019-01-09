@@ -3,8 +3,7 @@ const state = {
   isLogin: false,
   regisiterUser: [],
   // httppath: 'http://192.168.0.134:2861'
-  httppath: 'http://192.168.0.237:2860'
-  // httppath: config2
+  httppath: config.httppath
 }
 
 const actions = {

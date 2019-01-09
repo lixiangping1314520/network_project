@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="500px">
+   <el-main>
       <br>
       <br>
       <el-upload class="elmro"
@@ -15,35 +15,23 @@
                  :multiple="true"
                  accept=".xml, .zip">
         <el-button slot="trigger"
-                   size="small"
+                   size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
              class="el-upload__tip">支持zip,xml格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="small"
+                   size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
-        <!-- <el-button slot="trigger"
-                   size="small"
-                   type="primary"选取文件</el-button>
-        <el-button style="margin-left: 10px;"
-                   size="small"
-                   type="success"
-                   @click="submitUpload">上传到服务器</el-button> -->
       </el-upload>
-
-    </el-aside>
-    <el-aside>
       <br>
-      <br>
+      <hr/>     
       <el-button @click="analysis"
                  size="mini"
                  :loading="isloading"
+                 style="width:80px; margin-left:2px"
                  type="primary">解析</el-button>
-      <!-- <h1>解析进度</h1>
-      <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress> -->
-    </el-aside>
+     </el-main>
   </el-container>
 </template>
 <script>

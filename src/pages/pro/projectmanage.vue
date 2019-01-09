@@ -9,7 +9,6 @@
                    default-expand-all
                    :filter-node-method="filterNode"
                    @node-click="handleNodeClick">
-            ref="tree2">
           </el-tree>
         </el-aside>
         <el-container>
@@ -22,12 +21,12 @@
                         type="textarea"
                         v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="日期">
+            <!-- <el-form-item label="日期">
               {{form.createTime}}
             </el-form-item>
             <el-form-item label="最新修改日期">
               {{form.recentlyTime}}
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="备注">
               <el-input class="el-input"
                         type="textarea"
@@ -165,7 +164,7 @@ export default {
       var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username }
       this.$http.post(this.user.httppath + '/api/ProManage/DeleteProject',
         parm,
-        {headers: head}
+        { headers: head }
       ).then((response) => {
         if (response === 'success') {
           this.deleteDate_prom(id)

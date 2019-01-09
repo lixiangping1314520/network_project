@@ -14,15 +14,17 @@
                  :multiple="true"
                  accept=".zip, .xml, .gz">
         <el-button slot="trigger"
-                   size="small"
+                   size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
              class="el-upload__tip">支持.zip,.xml,.gz格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="small"
+                   size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
+      <br>
+      <hr />
       <el-button type="primary"
                  size="mini"
                  style="width:80px; margin-left:2px"
@@ -35,7 +37,6 @@
       <br>
       <br>
       <div v-if="isshow">
-        <h3>待解析进数据库的表</h3>
         <v-selectTable ref="seltab"
                        :tableData='needTabel'
                        :columns="columns"> </v-selectTable>
@@ -93,7 +94,7 @@ export default {
           this.table.push(this.needTabel[i])
         }
       }
-      this.$refs.seltab.multipleSelection = this.table
+      // this.$refs.seltab.multipleSelection = this.table
       // setTimeout(() => {
       //   this.$refs.seltab.toggleSelection(this.table)
       // }, 250)
@@ -104,6 +105,10 @@ export default {
         type: 'warning'
       })
     })
+    console.log(this.table)
+    setTimeout(() => {
+      this.$refs.seltab.toggleSelection(this.table)
+    }, 250)
   },
   methods: {
     ...mapMutations(['setpname_prom']),

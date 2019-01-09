@@ -1,5 +1,6 @@
 <template>
-  <div class="fullscreen">
+  <div class="fullscreen"
+       style="margin-left: 0px;">
     <div class="login-box">
       <div style="text-align: center">
         <img src="../assets/logo.png"
@@ -44,7 +45,6 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-
 export default {
   name: 'login',
   computed: {
@@ -132,6 +132,10 @@ export default {
     goRegister () {
       this.$router.push({ name: 'p-register' })
     }
+  },
+  created () {
+    console.log('asdasd')
+    console.log(this.$config)
   }
 }
 </script>
@@ -155,6 +159,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* border-left-width: 0px;
+  margin-left: 0px; */
 }
 .login-box {
   position: relative;

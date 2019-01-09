@@ -1,7 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="500px">
-      <br>
+    <el-main>
       <br>
       <el-upload class="elmro"
                  ref="upload"
@@ -15,27 +14,23 @@
                  :multiple="true"
                  accept=".zip, .xml">
         <el-button slot="trigger"
-                   size="small"
+                   size="mini"
                    type="primary">选取文件</el-button>
         <div slot="tip"
              class="el-upload__tip">支持zip,xml格式的文件</div>
         <el-button style="margin-left: 10px;"
-                   size="small"
+                   size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-    </el-aside>
-    <el-aside>
       <br>
-      <br>
+      <hr/>
       <el-button type="primary"
                  :loading="isloading"
                  size="mini"
+                 style="width:80px; margin-left:2px"
                  @click="analysis">解析</el-button>
-      <!-- <h1>解析进度</h1> -->
-      <!-- <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress> -->
-    </el-aside>
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -140,17 +135,6 @@ export default {
         console.log(error)
       })
     },
-    // myUpload () {
-    //   console.log('这是函数 myupload')
-    //   // this.submitUpload ()
-    //   console.log(this.fileList)
-    //   this.$http.post(this.user.httppath + '/api/Mr/Upload',
-    //     this.fileList
-    //   ).then((response) => {
-    //   }).catch((error) => {
-    //     console.log(error)
-    //   })
-    // },
     submitUpload () {
       console.log('这是函数 submitUpload')
       if (this.prom.prom_pname === 'default') {
@@ -160,8 +144,6 @@ export default {
           type: 'warning'
         })
       } else {
-        // var sStorage = sessionStorage.getItem('user')
-        // this.head = {'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr'}
         console.log(this.head)
         this.$refs.upload.submit()
       }

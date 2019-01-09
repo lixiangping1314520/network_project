@@ -1,9 +1,9 @@
 <template>
-  <div style="padding-left:10px; text-align:center">
-    <br>
-    <br>
-    <div>
-      <el-upload ref="upload"
+  <el-container>
+    <el-main>
+      <br>
+      <el-upload class="elmro"
+                 ref="upload"
                  action="uploadAction"
                  :headers="uploadHead"
                  :on-preview="handlePreview"
@@ -23,14 +23,16 @@
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
-    </div>
-    <br>
-    <el-button type="primary"
-               :loading="isloading"
-               size="mini"
-               style="width:80px; margin-left:2px"
-               @click="analysis">解析</el-button>
-  </div>
+      <br>
+      <hr />
+      <el-button type="primary"
+                 :loading="isloading"
+                 size="mini"
+                 style="width:80px; margin-left:2px"
+                 @click="analysis">解析</el-button>
+    </el-main>
+  </el-container>
+
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'

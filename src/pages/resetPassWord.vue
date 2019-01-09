@@ -54,9 +54,15 @@
   </div>
 </template>
 <script>
-// import {mapActions} from 'vuex'
+import {mapState} from 'vuex'
+// import { create } from 'domain' 于建
 export default {
   name: 'login',
+  computed: {
+    ...mapState({
+      user: (state) => state.user
+    })
+  },
   data () {
     return {
       username: '',
@@ -138,7 +144,7 @@ export default {
         email: this.email
       }
       console.log(userMessage)
-      this.$http.post('http://192.168.0.237:2860/api/WebUser/ResetPasswd', userMessage).then(res => {
+      this.$http.post(this.user.httppath + '/api/WebUser/ResetPasswd', userMessage).then(res => {
         console.log(res)
         if (res === '用户名和邮箱不匹配') {
           return this.$notify.error({

@@ -16,14 +16,19 @@
           <span class="text">{{userMessage.email}}</span>
         </p>
       </div>
-      <el-button  type="primary" plain size="medium" class="back-btn" @click="backBtn">返回上一页</el-button>
+      <el-button type="primary"
+                 plain
+                 size="medium"
+                 class="back-btn"
+                 @click="backBtn">返回上一页</el-button>
     </div>
   </div>
 </template>
 <script>
-// import { mapState } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   name: 'userMessage',
+
   data () {
     return {
       userMessage: {}
@@ -35,13 +40,13 @@ export default {
     }
   },
   computed: {
-    // ...mapState({
-    //   user: (state) => state.user
-    // })
+    ...mapState({
+      user: (state) => state.user
+    })
   },
   created () {
     let username = JSON.parse(sessionStorage.getItem('user')).username
-    this.$http.post('http://192.168.0.237:2860/api/UserInfo/UserInfo', {
+    this.$http.post(this.user.httppath + '/api/UserInfo/UserInfo', {
       username: username
     }).then((res) => {
       this.userMessage = res
@@ -80,24 +85,23 @@ export default {
   max-width: 40%;
   margin-bottom: 30px;
 }
-.user-content{
-  font-size: 18px
+.user-content {
+  font-size: 18px;
 }
-.user-content p{
+.user-content p {
   display: flex;
 }
-.label{
+.label {
   display: inline-block;
   text-align: right;
   width: 150px;
-  float: left;
-
+  /* float: left; */
 }
-.text{
+.text {
   display: inline-block;
-  margin-left: 5%
+  margin-left: 5%;
 }
-.back-btn{
+.back-btn {
   font-size: 16px;
 }
 @media (max-width: 768px) {

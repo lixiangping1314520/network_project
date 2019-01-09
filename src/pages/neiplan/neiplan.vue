@@ -17,7 +17,7 @@
                        :multiple="true"
                        accept=".txt">
               <el-button slot="trigger"
-                         size="small"
+                         size="mini"
                          type="primary">3g 宏站文件</el-button>
               <div slot="tip"
                    class="el-upload__tip">支持.txt格式的文件</div>
@@ -38,7 +38,7 @@
                        :multiple="true"
                        accept=".txt">
               <el-button slot="trigger"
-                         size="small"
+                         size="mini"
                          type="primary">4g 宏站文件</el-button>
               <div slot="tip"
                    class="el-upload__tip">支持.txt格式的文件</div>
@@ -58,7 +58,7 @@
                        :multiple="true"
                        accept=".csv">
               <el-button slot="trigger"
-                         size="small"
+                         size="mini"
                          type="primary">规划小区文件</el-button>
               <div slot="tip"
                    class="el-upload__tip">支持.csv格式文件</div>
@@ -70,13 +70,14 @@
     <br>
     <div>
       <div style="display:inline;">
-        <el-button size="small"
+        <el-button size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
         <a @click="down">模板下载 </a>
       </div>
     </div>
     <br>
+    <hr/>
     <el-dialog title="参数设置"
                :visible.sync="dialogVisible"
                :close-on-click-modal="false"
@@ -199,15 +200,6 @@
       </el-form-item>
     </el-form>
     <v-pageTable :tableData="oneTable"> </v-pageTable>
-    <!-- <el-select v-model="oneTableName"
-                 size="mini"
-                 placeholder="规划结果">
-        <el-option v-for="item in resultTableName"
-                   :key="item.value"
-                   :label="item.value"
-                   :value="item.value">
-        </el-option>
-      </el-select> -->
     <br>
     <br>
   </div>
@@ -232,7 +224,6 @@ export default {
     return {
       uploadAciton: '', // 上传文件的url
       atb_format: false,
-      // processNum: 0,
       head: {}, // axios请求头部
       gsmDate: {},
       lteDate: {},
@@ -242,7 +233,6 @@ export default {
       fileListCell: [],
       activeIndex: '1', // 参数设置 活跃页面
       dialogVisible: false, // 是否呈现弹出框
-      // activeName: 'second',
       ptype: '',
       form: {
         'differentFrequency': '16',
@@ -406,20 +396,6 @@ export default {
         this.ptype = ''
       }
     },
-    // handleClick (tab, event) {
-    //   console.log('这是 handleClick 函数')
-    //   var index = tab.$vnode.child.index
-    //   console.log(index)
-    //   if (index === '0') {
-    //     this.ptype = 'lteOutdoor'
-    //   } else if (index === '1') {
-    //     this.ptype = 'lteIndoor'
-    //   } else if (index === '2') {
-    //     this.ptype = 'umtsIndoor'
-    //   } else {
-    //     this.ptype = ''
-    //   }
-    // },
     numberT (value) {
       if (value === '') { return }
       console.log('这是 intTest 函数')

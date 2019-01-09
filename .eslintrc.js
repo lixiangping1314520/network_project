@@ -33,5 +33,10 @@ module.exports = {
     "no-multiple-empty-lines": ['warn', {"max": 100}],
     //关闭禁止混用tab和空格
     "no-mixed-spaces-and-tabs": ['warn']
-  }
+    // 不允许使用全局变量 - 关闭
+    // "no-implicit-globals": 0
+  },
+  // globals: {
+  //   'config2': true
+  // }
 }

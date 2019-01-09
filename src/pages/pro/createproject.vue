@@ -1,31 +1,40 @@
 <template>
-    <el-container >
-      <el-form ref="form"
-               :model="form"
-               label-width="100px">
-        <h2 style="text-align: center"> 创建项目</h2>
-        <el-form-item label="项目名称">
-          <el-input class="el-input"
-                    type="textarea"
-                    v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="创建日期">
-          {{form.createTime}}
-        </el-form-item>
-        <el-form-item label="最新修改日期">
-          {{form.recentlyTime}}
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input class="el-input"
-                    type="textarea"
-                    v-model="form.remarks"></el-input>
-        </el-form-item>
-        <el-button type="primary"
-                   style="margin-left:41%;"
-                   size="mini"
-                   @click="onSubmit">立即创建</el-button>
-      </el-form>
-    </el-container>
+  <el-container>
+    <el-form 
+             ref="form"
+             :model="form"
+             label-width="100px">
+      <h2 style="text-align: center"> 创建项目</h2>
+      <el-form-item label="项目名称">
+        <el-input class="el-input"
+                  type="textarea"
+                  v-model="form.name"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="创建日期">
+        {{form.createTime}}
+      </el-form-item>
+      <el-form-item label="最新修改日期">
+        {{form.recentlyTime}}
+      </el-form-item> -->
+      <el-form-item label="备注">
+        <el-input class="el-input"
+                  type="textarea"
+                  v-model="form.remarks"></el-input>
+      </el-form-item>
+      <el-button type="primary"
+                 style="margin-left:41%;"
+                 size="mini"
+                 @click="onSubmit">立即创建</el-button>
+    </el-form>
+    <!-- <el-dialog title="参数设置"
+               :visible.sync="isShow"
+               :close-on-click-modal="false"
+               :append-to-body="atb_format">
+      <div>
+        我哪个去
+      </div>
+    </el-dialog> -->
+  </el-container>
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -44,7 +53,8 @@ export default {
         createTime: new Date(),
         recentlyTime: new Date(),
         remarks: ''
-      }
+      },
+      isShow: true
     }
   },
   created: function () {
@@ -54,7 +64,6 @@ export default {
     console.log(this.headers)
   },
   methods: {
-    // ...mapMutations(['updateData_prom']),
     onSubmit () {
       const pattern = /^[a-zA-Z0-9\u4e00-\u9fa5]{2,20}$/
       if (!pattern.test(this.form.name)) {
@@ -111,11 +120,14 @@ export default {
 <style type="text/css">
 .fullscreen {
   /* border-style: ridge; */
-   /* margin-top: 1%;
+  /* margin-top: 1%;
   margin-left: 38%; */
-  width: 500px; 
+  width: 500px;
 }
 .el-input {
   width: 350px;
+}
+.elmro {
+  text-align: center;
 }
 </style>

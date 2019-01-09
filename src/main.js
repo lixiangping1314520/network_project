@@ -8,6 +8,7 @@ import NProgress from 'nprogress'
 // 引入echarts
 import echarts from 'echarts'
 
+import config2 from '../static/config2.js'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -37,8 +38,8 @@ import MContainer from '@/m/container'
 // import saveState from './basic/saveState.js'
 
 Vue.prototype.$echarts = echarts
+// Vue.use(config2)
 Vue.use(ElementUI)
-
 Vue.use(DropdownPlugin)
 Vue.use(NavbarPlugin)
 Vue.use(ContextMenuPlugin)
@@ -119,7 +120,8 @@ Axios.interceptors.response.use(
 
 Vue.prototype.$http = Axios
 Vue.http = Axios
-
+// Vue.prototype.$apiPrefixes = config['ip']
+Vue.prototype.$config = config2
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

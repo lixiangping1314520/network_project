@@ -1,7 +1,6 @@
 <template>
   <el-container>
-    <el-aside width="500px">
-      <br>
+    <el-main>
       <br>
       <el-upload class="elmro"
                  ref="upload"
@@ -23,31 +22,15 @@
                    size="mini"
                    type="success"
                    @click="submitUpload">上传到服务器</el-button>
-      </el-upload>
-    </el-aside>
-    <el-aside>
+      </el-upload>  
       <br>
-      <br>
+      <hr/>
       <el-button @click="analysis"
                  size="mini"
                  :loading="isloading"
-                 type="primary">解析</el-button>
-      <!-- <h1>解析进度</h1>
-      <el-progress class="aprogress"
-                   :percentage=this.processNum></el-progress> -->
-    </el-aside>
-    <!-- <br>
-    <div class="progress">
-                    <div class="init-box">
-	        <div>
-	          <svg viewBox="0 0 50 50" class="svg-icon m-loading init-loading">
-	            <circle cx="25" cy="25" r="20" fill="none" stroke="#F2F2F2" class="path"></circle>
-	            <circle cx="25" cy="25" r="20" fill="none" stroke="#24A2FF" stroke-dasharray="60,150" class="path"></circle>
-	          </svg>
-	        </div>
-	        <p class="init-tips">正在解析，请耐心等待...</p>
-	    </div>
-	  </div> -->
+                 style="width:80px; margin-left:2px"
+                 type="primary">解析</el-button>   
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -96,15 +79,6 @@ export default {
         return
       }
       this.dbInput()
-      // var id = setInterval(() => {
-      //   console.log('2s 后执行')
-      //   this.i = this.processbar()
-      //   console.log(this.processNum)
-      //   if (this.processNum === 100) {
-      //     clearInterval(id)
-      //     console.log('定时器关闭')
-      //   }
-      // }, 2000)
     },
     send () {
       console.log('这是send 函数')

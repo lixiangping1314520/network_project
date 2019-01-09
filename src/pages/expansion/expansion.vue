@@ -1,6 +1,5 @@
 <template>
   <div style="padding-left:10px;">
-    <!-- <> -->
     <br>
     <br>
     <el-upload class="elmro"
@@ -24,6 +23,7 @@
                  type="success"
                  @click="submitUpload">上传到服务器</el-button>
     </el-upload>
+    <hr/>
     <el-button type="primary"
                size="mini"
                style="width:80px"
@@ -40,9 +40,6 @@
       <el-button type="primary"
                  size="mini"
                  @click="addrow">添加</el-button>
-      <el-button type="primary"
-                 size="mini"
-                 @click="parClose">关闭</el-button>
       <el-table border
                 :highlight-current-row="true"
                 :data="tablesData">
@@ -139,33 +136,12 @@
       </el-form>
     </el-dialog>
     <br>
-    <!-- <el-table width="400px"
-                :highlight-current-row="true"
-                :data="oneTableData">
-        <el-table-column :label="key"
-                         v-for="(date, key) in oneTableData[0]"
-                         :key="key"
-                         :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{scope.row[key]}}
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="pagination-wrapper">
-        <el-pagination layout="prev, pager, next"
-                       :total="pageNum_1"
-                       :page-size="6"
-                       @current-change="handleCurrentChange_1">
-        </el-pagination>
-      </div> -->
   </div>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
 import exportTable from '../../basic/exportTable'
 import pageTable from '../../basic/pageTable.vue'
-// import { triggerAsyncId } from 'async_hooks'
 export default {
   computed: {
     ...mapState({
@@ -200,7 +176,6 @@ export default {
       fileList: [],
       selectrow: -1,
       tables: [], // 参数配置表
-      // tablesData: [], // 参数配置表
       pageNum: 0,
       isloading: false,
       resultTable: {},
@@ -208,7 +183,6 @@ export default {
       oneTable: [],
       tableName: '',
       oneTableData: []
-      // pageNum_1: 0
     }
   },
   created () {
@@ -250,13 +224,6 @@ export default {
     initPageNum () {
       this.pageNum = this.tables.length
     },
-
-    // // 点击跳转页面，显示对应的数据
-    // handleCurrentChange_1 (pageIndex) {
-    //   // pageIndex = pageIndex || 1
-    //   let pageSize = 6
-    //   this.oneTableData = this.oneTable.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
-    // },
     initPageNum_1 () {
       this.pageNum_1 = this.oneTable.length
     },
@@ -287,16 +254,11 @@ export default {
       this.form['扩容后配置'] = this.tables[index]['扩容后配置']
       this.form['扩容小区'] = this.tables[index]['扩容小区']
       this.isShow = !this.isShow
-      // console.log(index, row)
     },
     paramPeizhi () {
-      this.isShow_Par = true
-    },
-    parClose () {
-      this.isShow_Par = false
+      this.isShow_Par = !this.isShow_Par
     },
     addrow () {
-      // this.isShow = true
       this.selectrow = -1
       this.form['等待扩容小区'] = ''
       this.form['站号'] = ''
@@ -348,7 +310,6 @@ export default {
     },
     myUpload () {
       console.log('这是函数 myupload')
-      // this.submitUpload ()
       console.log(this.fileList)
       this.$http.post(this.user.httppath + '/api/Mr/Upload',
         this.fileList

@@ -84,35 +84,10 @@ export default {
     send () {
       console.log('这是send 函数')
     },
-    processbar () {
-      console.log('函数 processbar 测试进度条某一刻的值')
-      this.$http.post(this.user.httppath + '/api/Mr/MrAnalysisProcess',
-        {},
-        { headers: this.head }
-      ).then((response) => {
-        console.log('函数 processbar 响应')
-        console.log(response)
-        this.$notify({
-          title: '成功',
-          message: '解析成功',
-          type: 'success'
-        })
-        return response
-      }).catch((error) => {
-        console.log('函数 processbar 响应 失败')
-        console.log('error')
-        this.$notify({
-          title: '警告',
-          message: error,
-          type: 'warning'
-        })
-        console.log(error)
-      })
-    },
     dbInput () {
       console.log('dbInput')
       this.isloading = true
-      this.$http.post(this.user.httppath + '/api/Mr/Mranalysis',
+      this.$http.post(this.user.httppath + '/api/Mr/Parse',
         {},
         { headers: this.head }
       ).then((response) => {

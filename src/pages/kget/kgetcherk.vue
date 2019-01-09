@@ -55,7 +55,7 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
-import exportTable from '../../basic/exportTable'
+import exportTable from '../../basic/exportTable.vue'
 import pageTable from '../../basic/pageTable.vue'
 import fileDownload from '../../basic/fileDownload.js'
 export default {
@@ -112,12 +112,13 @@ export default {
         }
       }
     },
-    save () {
+    analysis () {
       this.isloading = true
       this.$http.post(this.user.httppath + '/api/Kget/ParamCheck',
         this.tables,
         this.headers
       ).then((response) => {
+        console.log(response)
         this.resultTable = response
         console.log(this.resultTable)
         this.isloading = false

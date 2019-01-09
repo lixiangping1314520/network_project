@@ -23,7 +23,7 @@
                  type="success"
                  @click="submitUpload">上传到服务器</el-button>
     </el-upload>
-    <hr/>
+    <hr />
     <el-button type="primary"
                size="mini"
                style="width:80px"
@@ -40,7 +40,8 @@
       <el-button type="primary"
                  size="mini"
                  @click="addrow">添加</el-button>
-      <el-table border
+
+      <!-- <el-table border
                 :highlight-current-row="true"
                 :data="tablesData">
         <el-table-column :label="key"
@@ -72,7 +73,42 @@
                        :page-size="6"
                        @current-change="handleCurrentChange">
         </el-pagination>
-      </div>
+      </div> -->
+
+      <el-table ref="multipleTable"
+                :data="tables.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+                tooltip-effect="dark"
+                style="width: 100%">
+        <el-table-column :label="date"
+                         v-for="(date, key) in tables[0]"
+                         :key="key"
+                         :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row[key]}}</template>
+        </el-table-column>
+           <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini"
+                       fixed='right'
+                       @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini"
+                       type="danger"
+                       @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange"
+                     :current-page.sync="currentPage"
+                     :page-size="pagesize"
+                     layout="prev, pager, next, jumper"
+                     :pager-count="5"
+                     :total="total">
+      </el-pagination>
+
     </div>
     <el-form :inline="true"
              class="demo-form-inline"
@@ -171,7 +207,7 @@ export default {
         '扩容后配置': '',
         '扩容小区': ''
       },
-      isShow_Par: false,
+      isShow_Par: true,
       isShow: false,
       fileList: [],
       selectrow: -1,
@@ -182,7 +218,11 @@ export default {
       resultTableName: [{ 'tableName': '扩容结果' }, { 'tableName': '扩容错误信息' }, { 'tableName': '错误信息' }],
       oneTable: [],
       tableName: '',
-      oneTableData: []
+      oneTableData: [],
+      tablesData: [],
+      total: 0,
+      pagesize: 10,
+      currentPage: 1
     }
   },
   created () {
@@ -197,18 +237,18 @@ export default {
     this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'expansion', 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
 
     this.uploadAction = this.user.httppath + '/api/Expasion/Upload'
-    console.log('这是uploadAction')
-    console.log(this.uploadAction)
-    console.log(JSON.stringify(this.headers))
     this.$http.post(this.user.httppath + '/api/Expasion/GetInTemplate',
       {},
       { headers: this.headers }
     ).then((response) => {
       console.log(response)
-      this.tables = response
+      if (response !== '不能操作该工程') {
+        this.tables = response
+        this.total = this.tables.length
+      }
       // 刚打开页面时加载前10项、且自动生成分页数量
-      this.handleCurrentChange(1)
-      this.initPageNum()
+      // this.handleCurrentChange(1)
+      // this.initPageNum()
     }).catch((error) => {
       console.log(error)
     })
@@ -216,17 +256,17 @@ export default {
   methods: {
     ...mapMutations(['setpname_prom']),
     // 点击跳转页面，显示对应的数据
-    handleCurrentChange (pageIndex) {
-      // pageIndex = pageIndex || 1
-      let pageSize = 6
-      this.tablesData = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
-    },
+    // handleCurrentChange (pageIndex) {
+    //   // pageIndex = pageIndex || 1
+    //   let pageSize = 6
+    //   this.tablesData = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
+    // },
     initPageNum () {
       this.pageNum = this.tables.length
     },
-    initPageNum_1 () {
-      this.pageNum_1 = this.oneTable.length
-    },
+    // initPageNum_1 () {
+    //   this.pageNum_1 = this.oneTable.length
+    // },
     analysis () {
       // console.log(' analysis 测试进度条比变化')
       if (this.prom.prom_pname === 'default') {
@@ -243,20 +283,28 @@ export default {
       console.log('这是send 函数')
     },
     handleEdit (index, row) {
-      this.selectrow = index
-      this.form['等待扩容小区'] = this.tables[index]['等待扩容小区']
-      this.form['站号'] = this.tables[index]['站号']
-      this.form['站名'] = this.tables[index]['站名']
-      this.form['分公司'] = this.tables[index]['分公司']
-      this.form['扩容前配置'] = this.tables[index]['扩容前配置']
-      this.form['双载波扩容方案'] = this.tables[index]['双载波扩容方案']
-      this.form['扩容扇区数'] = this.tables[index]['扩容扇区数']
-      this.form['扩容后配置'] = this.tables[index]['扩容后配置']
-      this.form['扩容小区'] = this.tables[index]['扩容小区']
+      this.selectrow = index + (this.currentPage - 1) * this.pagesize
+      this.form['等待扩容小区'] = this.tables[this.selectrow]['等待扩容小区']
+      this.form['站号'] = this.tables[this.selectrow]['站号']
+      this.form['站名'] = this.tables[this.selectrow]['站名']
+      this.form['分公司'] = this.tables[this.selectrow]['分公司']
+      this.form['扩容前配置'] = this.tables[this.selectrow]['扩容前配置']
+      this.form['双载波扩容方案'] = this.tables[this.selectrow]['双载波扩容方案']
+      this.form['扩容扇区数'] = this.tables[this.selectrow]['扩容扇区数']
+      this.form['扩容后配置'] = this.tables[this.selectrow]['扩容后配置']
+      this.form['扩容小区'] = this.tables[this.selectrow]['扩容小区']
       this.isShow = !this.isShow
     },
     paramPeizhi () {
-      this.isShow_Par = !this.isShow_Par
+      if (this.tables.length !== 0) {
+        this.isShow_Par = !this.isShow_Par
+      } else {
+        this.$notify({
+          title: '警告',
+          message: '不能对公共工程进行操作',
+          type: 'warning'
+        })
+      }
     },
     addrow () {
       this.selectrow = -1
@@ -272,7 +320,7 @@ export default {
       this.isShow = !this.isShow
     },
     handleDelete (index, row) {
-      this.tables.splice(index, 1)
+      this.tables.splice(index + (this.currentPage - 1) * this.pagesize, 1)
       console.log(index, row)
     },
     changeTableName () {
@@ -367,6 +415,14 @@ export default {
       this.form['RECOMMENDEDVALUE'] = ''
       this.form['VERSION'] = ''
       this.isShow = false
+    },
+    handleSelectionChange (selection) {
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
     }
   }
 }

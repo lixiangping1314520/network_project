@@ -1,12 +1,12 @@
 <template>
   <el-container>
-   <el-main>
+    <el-main>
       <br>
       <br>
       <el-upload class="elmro"
                  ref="upload"
                  :action="uploadAction"
-                 :headers="uploadHead"
+                 :headers="getuploadHead"
                  :on-preview="handlePreview"
                  :on-remove="handleRemove"
                  :file-list="fileList"
@@ -25,13 +25,13 @@
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
       <br>
-      <hr/>     
+      <hr />
       <el-button @click="analysis"
                  size="mini"
                  :loading="isloading"
                  style="width:80px; margin-left:2px"
                  type="primary">解析</el-button>
-     </el-main>
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -43,8 +43,18 @@ export default {
       user: (state) => state.user,
       pm: (state) => state.pm
     }),
+    gethead () {
+      var head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
+      return head
+    },
+    getuploadHead () {
+      var uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype, 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+      return uploadHead
+    },
     getpmtype () {
       var thisvalue = ''
+      // 测试
+      console.log(this.pm.pm_typeNow)
       if (this.pm.pm_typeNow === '3g rbs') {
         thisvalue = 'PM_3G_RBS'
       } else if (this.pm.pm_typeNow === '3g rnc') {
@@ -57,12 +67,11 @@ export default {
       return thisvalue
     }
   },
-  // ...mapGetters(['getpmtype']),
   data () {
     return {
       processNum: 70,
-      head: {},
-      uploadHead: {},
+      // head: {},
+      // uploadHead: {},
       fileList: [],
       uploadAction: '',
       isloading: false
@@ -76,25 +85,12 @@ export default {
     window.addEventListener('beforeunload', () => {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
     })
-    console.log(this.getpmtype)
-    this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
-    this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype, 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+    // this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
+    // this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype, 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
     this.uploadAction = this.user.httppath + '/api/Pm/Upload'
-    console.log(this.head)
-    console.log(this.uploadHead)
   },
   methods: {
     ...mapMutations(['setpname_prom']),
-    // analysis2 () {
-    //   var id = setInterval(() => {
-    //     var a = 100
-    //     console.log('定时器响应中')
-    //     if (a === 100) {
-    //       clearInterval(id)
-    //       console.log('定时器关闭')
-    //     }
-    //   }, 4000)
-    // },
     analysis () {
       console.log(this.getpmtype)
       if (this.prom.prom_pname === 'default') {
@@ -103,32 +99,20 @@ export default {
           message: '没有权限对公有工程进行数据入库',
           type: 'warning'
         })
+        return
       }
       this.dbInput()
     },
     send () {
       console.log('这是send 函数')
     },
-    processbar () {
-      console.log('函数 processbar')
-      this.$http.post(this.user.httppath + '/api/api/Pm/Parse',
-        {},
-        { headers: this.head }
-      ).then((response) => {
-        console.log('函数 processbar 响应')
-        console.log(response)
-        return response
-      }).catch((error) => {
-        console.log('函数 processbar 响应 失败')
-        console.log('error')
-        console.log(error)
-      })
-    },
     dbInput () {
       this.isloading = true
+      // this.head = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype }
+      // console.log()
       this.$http.post(this.user.httppath + '/api/Pm/Parse',
         {},
-        { headers: this.head }
+        { headers: this.gethead }
       ).then((response) => {
         this.isloading = false
         this.$notify({
@@ -136,8 +120,6 @@ export default {
           message: '解析完成',
           type: 'success'
         })
-        console.log('函数 dbInput success')
-        console.log(response)
       }).catch((error) => {
         this.isloading = false
         this.$notify({
@@ -145,13 +127,9 @@ export default {
           message: error,
           type: 'warning'
         })
-
-        console.log('函数 dbInput error')
-        console.log(error)
       })
     },
     submitUpload () {
-      console.log('这是函数 submitUpload')
       if (this.prom.prom_pname === 'default') {
         this.$notify({
           title: '警告',
@@ -159,6 +137,9 @@ export default {
           type: 'warning'
         })
       } else {
+        // this.uploadHead = { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': this.getpmtype, 'Authorization': 'bearer ' + sessionStorage.getItem('token') }
+        // console.log(this.uploadHead)
+        // console.log(this.uploadAction)
         this.$refs.upload.submit()
       }
     },
@@ -172,7 +153,6 @@ export default {
       console.log(file)
     }
   }
-
 }
 </script>
 <style>

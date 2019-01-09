@@ -37,23 +37,25 @@ export default {
       // 待呈现的表 格式 [{'column1': 'value1', 'column2': 'value2'},{'column1': 'value1', 'column2': 'value2'}]
       type: Array,
       default: () => []
-    },
-    pagesize: {
-      // 每页的数据条数
-      type: Number,
-      default: 10
-    },
-    currentPage: {
-      // 默认开始页面
-      type: Number,
-      default: 1
     }
+    // pagesize: {
+    //   // 每页的数据条数
+    //   type: Number,
+    //   default: 10
+    // },
+    // currentPage: {
+    //   // 默认开始页面
+    //   type: Number,
+    //   default: 1
+    // }
   },
   data () {
     return {
       search: '', // 搜索的字段
       total: 0,
-      columns: {}
+      columns: {},
+      pagesize: 10,
+      currentPage: 1
     }
   },
   methods: {
@@ -83,8 +85,8 @@ export default {
         this.columns[key] = key
       }
       this.total = this.tableData.length
-      this.pagesize = 10
-      this.currentPage = 1
+      // this.pagesize = 10
+      // this.currentPage = 1
     }
   },
   computed: {

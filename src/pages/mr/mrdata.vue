@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header class="elmro">这是MRO的数据</el-header>
+    <el-header class="elmro">这是MR的数据</el-header>
     <el-container>
       <el-aside width="200px">
         <el-input placeholder="输入关键字进行过滤"
@@ -18,6 +18,7 @@
       <el-container>
         <el-main>
           <export-table :tableData="data_list"></export-table>
+          <br>
           <el-table :data="data_list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                     style="width: 100%">
             <el-table-column :label="key"
@@ -101,10 +102,6 @@ export default {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
     })
     this.headers = { headers: { 'projectname': this.prom.prom_pname, 'username': this.user.user.username, 'filetype': 'mr' } }
-    console.log('mrdata.vue create 函数')
-    // console.log(localStorage.getItem('pname'))
-    console.log(this.prom.prom_pname)
-    console.log(this.user.user.username)
     this.$http.post(this.user.httppath + '/api/MRTest/GetTableName',
       {},
       this.headers

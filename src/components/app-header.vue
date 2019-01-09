@@ -30,8 +30,10 @@
             <span class="caret"></span>
           </a>
           <m-dropdown-panel>
-            <m-dropdown-item name="p-userMessage">用户信息</m-dropdown-item>
-            <m-dropdown-item name="p-resetPassWord">修改密码</m-dropdown-item>
+            <m-dropdown-item><span style="display: inline-block;"
+                    @click="handleuserMessage">用户信息</span></m-dropdown-item>
+            <m-dropdown-item><span style="display: inline-block;"
+                    @click="handleRest">修改密码</span></m-dropdown-item>
             <!-- <m-dropdown-item disabled>注销</m-dropdown-item> -->
             <div class="test-line"></div>
             <!-- <m-dropdown-item name="login">退出账号</m-dropdown-item> -->
@@ -73,6 +75,14 @@
         </m-dropdown>
       </m-nav-item>
     </m-nav>
+    <div class="reset"
+         v-show="resetPassword">
+      <reset-password @closeReset="closeReset"></reset-password>
+    </div>
+    <div class="userMessage"
+         v-show="userMessage">
+      <user-message @closeuserMessage="closeuserMessage"></user-message>
+    </div>
   </m-navbar>
 </template>
 
@@ -83,8 +93,14 @@ import {
   exitFullscreen
 } from '@/utils'
 import themes from './theme'
+import ResetPassword from '../pages/resetPassWord'
+import UserMessage from '../pages/userMessage'
 export default {
   name: 'app-header',
+  components: {
+    ResetPassword,
+    UserMessage
+  },
   data () {
     return {
       currentProject: 'project1',
@@ -93,7 +109,9 @@ export default {
       themes,
       themeType: '',
       showAside: true,
-      theme: { theme: { headerTheme: 'info' } }
+      theme: { theme: { headerTheme: 'info' } },
+      resetPassword: false,
+      userMessage: false
     }
   },
   computed: {
@@ -130,6 +148,19 @@ export default {
     goOut () {
       sessionStorage.clear()
       this.$router.push({ name: 'login' })
+    },
+    handleRest () {
+      this.resetPassword = true
+    },
+    handleuserMessage () {
+      this.userMessage = true
+    },
+    closeReset () {
+      console.log(this.resetPassword)
+      this.resetPassword = false
+    },
+    closeuserMessage () {
+      this.userMessage = false
     }
   },
   created () {
@@ -150,5 +181,14 @@ export default {
 }
 .side-switch:hover {
   color: #fff;
+}
+.reset,
+.userMessage {
+  /* position: fixed; */
+  position: relative;;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>

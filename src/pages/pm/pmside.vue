@@ -64,6 +64,7 @@ export default {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
     })
     this.setCurrentRoute()
+    this.setpm_typeNow('3g rnc')
   },
   watch: {
     $route () {

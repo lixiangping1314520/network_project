@@ -16,7 +16,7 @@ const menus = [
       {id: 'a1', name: 'mrside', label: 'mr', icon: 'el-icon-view'},
       {id: 'a2', name: 'pmside', label: 'pm', icon: 'el-icon-view'},
       {id: 'a3', name: 'blkside', label: 'bulkcm', icon: 'el-icon-view'},
-      {id: 'a4', name: 'kgetside', label: 'kegt', icon: 'el-icon-view'},
+      {id: 'a4', name: 'kgetside', label: 'kget', icon: 'el-icon-view'},
       {id: 'a5', name: 'cmalside', label: '工参表', icon: 'el-icon-view'}
     ]
   },

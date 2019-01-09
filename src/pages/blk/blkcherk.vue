@@ -111,21 +111,29 @@ export default {
       console.log('这是函数 handlePreview')
       console.log(file)
     },
-    save () {
+    analysis () {
+      console.log('这是点击函数')
       this.isloading = true
       this.$http.post(this.user.httppath + '/api/Bulkcm/ParamCheck',
         {},
         this.headers
       ).then((response) => {
-        this.resultTable = response
-        this.isloading = false
-        console.log('这是response')
-        console.log(response)
-        this.$notify({
-          title: '成功',
-          message: '解析完成',
-          type: 'success'
-        })
+        if (response === '请上传核查文件') {
+          this.isloading = false
+          this.$notify({
+            title: '警告',
+            message: '请上传核查文件',
+            type: 'warning'
+          })
+        } else {
+          this.resultTable = response
+          this.isloading = false
+          this.$notify({
+            title: '成功',
+            message: '解析完成',
+            type: 'success'
+          })
+        }
       }).catch((error) => {
         this.$notify({
           title: '警告',
@@ -138,7 +146,6 @@ export default {
       this.$refs.upload.submit()
     },
     changeTableName () {
-      // console.log(this.resultTable)
       if (Object.keys(this.resultTable).length !== 0) {
         if (this.tableName === '错误信息表') {
           this.oneTable = this.resultTable['错误信息表']

@@ -1,48 +1,39 @@
 <template>
   <el-container>
-    <el-header>
-      <br>
-      <export-table :tableData="result"></export-table>
-    </el-header>
+    <el-aside width="300px">
+      <el-table @row-click="handleRowChange"
+                :highlight-current-row="true"
+                :data="showTables"
+                style="width: 300px">
+        <el-table-column :show-overflow-tooltip="true"
+                         prop="tableName"
+                         label="表名称">
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination-wrapper">
+        <el-pagination layout="prev, pager, next"
+                       :pager-count="5"
+                       :total="pageNum"
+                       @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
+    </el-aside>
     <el-main>
-      <el-container>
-        <el-aside width="300px">
-          <el-table @row-click="handleRowChange"
-                    :highlight-current-row="true"
-                    :data="showTables"
-                    style="width: 300px">
-            <el-table-column :show-overflow-tooltip="true"
-                             prop="tableName"
-                             label="表名称">
-            </el-table-column>
-          </el-table>
-
-          <div class="pagination-wrapper">
-            <el-pagination layout="prev, pager, next"
-                           :pager-count="5"
-                           :total="pageNum"
-                           @current-change="handleCurrentChange">
-            </el-pagination>
-          </div>
-
-        </el-aside>
-        <el-main>
-          <el-main>
-            <el-table :data="result"
-                      style="width: 100%">
-              <el-table-column :label="key"
-                               v-for="(date, key) in result[0]"
-                               :key="key"
-                               :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  {{scope.row[key]}}
-                </template>
-              </el-table-column>
-            </el-table>
-            </div>
-          </el-main>
-        </el-main>
-      </el-container>
+      <v-exportTable :tableData="result">
+      </v-exportTable>
+      <br>
+      <el-table :data="result"
+                style="width: 100%">
+        <el-table-column :label="key"
+                         v-for="(date, key) in result[0]"
+                         :key="key"
+                         :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{scope.row[key]}}
+          </template>
+        </el-table-column>
+      </el-table>
     </el-main>
   </el-container>
 </template>
@@ -57,7 +48,7 @@ export default {
     })
   },
   components: {
-    exportTable
+    'v-exportTable': exportTable
   },
   data () {
     return {
@@ -85,7 +76,6 @@ export default {
     ).then((response) => {
       console.log(response)
       this.tables = response
-
       // 刚打开页面时加载前10项、且自动生成分页数量
       this.handleCurrentChange(1)
       this.initPageNum()
@@ -98,8 +88,7 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 10
-      console.log(1)
+      let pageSize = 14
       this.showTables = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize - 1)
     },
     initPageNum () {

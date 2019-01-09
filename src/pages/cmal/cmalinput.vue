@@ -83,21 +83,6 @@ export default {
     send () {
       console.log('这是send 函数')
     },
-    processbar () {
-      console.log('函数 processbar 测试进度条某一刻的值')
-      this.$http.post(this.user.httppath + '/api/Worktable/TableName',
-        {},
-        { headers: this.headers }
-      ).then((response) => {
-        console.log('函数 processbar 响应')
-        console.log(response)
-        return response
-      }).catch((error) => {
-        console.log('函数 processbar 响应 失败')
-        console.log('error')
-        console.log(error)
-      })
-    },
     dbInput () {
       this.isloading = true
       this.$http.post(this.user.httppath + '/api/Worktable/Parse',

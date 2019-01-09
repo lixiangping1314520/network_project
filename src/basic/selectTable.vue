@@ -13,7 +13,7 @@
               :data="tables"
               tooltip-effect="dark"
               style="width: 100%"
-              @selection-change="handleSelectionChange"
+              @select-all="selectAll"
               @select="selects">
       <el-table-column type="selection"
                        width="55"></el-table-column>
@@ -79,13 +79,10 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    handleSelectionChange (selection) {
-      console.log('handleSelectionChange 函数')
+    selectAll (selection) {
+      this.multipleSelection = selection
     },
     selects (selection, onerows) {
-      // 选中某一行触发函数
-      console.log('选择某一项触发的函数')
-      console.log(selection)
       this.multipleSelection = selection
     }
   },
@@ -95,9 +92,6 @@ export default {
         this.toggleSelection(this.multipleSelection)
       }, 250)
     }
-    // multipleSelection () {
-    //   this.$emit('muEvent', this.multipleSelection)
-    // }
   }
 }
 </script>

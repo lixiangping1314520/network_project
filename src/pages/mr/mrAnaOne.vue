@@ -73,11 +73,17 @@
                v-model="thresholdHight"
                theme="danger"
                size="small" />
-
-      </br> </br> </br> </br> </br> </br> </br> </br>
+      </br> </br> </br> </br>
+      <hr/>
+      </br> </br> </br> </br>
+     
       <div id="myChart"
            :style="{width: '900px', height: '300px'}"></div>
-      <el-table :data="data"
+      <hr />
+      <v-exportTable :tableData="data"></v-exportTable>
+      </br></br>
+      <v-pageTable :tableData="data"> </v-pageTable>
+      <!-- <el-table :data="data"
                 style="width: 100%">
         <el-table-column :label="key"
                          v-for="(date, key) in data[0]"
@@ -86,18 +92,24 @@
             {{scope.row[key]}}
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> -->
     </el-main>
   </el-container>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
+import exportTable from '../../basic/exportTable.vue'
+import pageTable from '../../basic/pageTable.vue'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    'v-exportTable': exportTable,
+    'v-pageTable': pageTable
   },
   data () {
     return {
@@ -186,6 +198,7 @@ export default {
           message: '数据不完整',
           type: 'warning'
         })
+        return
       }
       console.log(mr)
       var headers = { headers: { 'projectname': this.prom.prom_pname, 'username': JSON.parse(sessionStorage.user).username, 'filetype': 'mr' } }

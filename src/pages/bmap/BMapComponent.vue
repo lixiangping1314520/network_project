@@ -11,16 +11,38 @@
            v-if="isCell">没有找到数据</div>
       <ul class="cell-list"
           v-else>
-        <li class="cell-item"
-            v-for="cellItem in filterPoints"
-            @click="choiceCell($event,cellItem)">
-          {{cellItem.CELL}}
+        <li>
+          <h3 @click="{{isShowAllTable = !isShowAllTable}}" style="cursor: pointer;">总表</h3>
+          <ul class="list-item" v-show="isShowAllTable">
+            <li class="cell-item"
+              v-for="cellItem in filterPoints"
+              @click="choiceCell($event,cellItem)">
+              {{cellItem.Cell}}
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h3 @click="{{isShowPlanTable = !isShowPlanTable}}" style="cursor: pointer;">邻区规划站点</h3>
+          <ul class="list-item" v-show="isShowPlanTable">
+            <li class="cell-item"
+              v-for="cellItem in planTable"
+              @click="choiceCell($event,cellItem)">
+              {{cellItem.Cell}}
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
     <div class="map-content">
+      <div class="toolBar">
+        <div class="neiplan">
+          <button @click="showNeiplan">显示规划点位</button>
+          <button @click.prevent="addMarker">显示总表</button>
+          <button @click="getNeiplanResult">获取邻区规划</button>
+        </div>
+      </div>
       <div id="allmap"
-           style="height: 600px;">
+           style="height: 400px;">
       </div>
       <!-- <div id="r-result">请输入:<input type="text" id="suggestId" size="20" value="百度" style="width:150px;" @highlight="" /></div> -->
       <!-- <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div> -->
@@ -36,20 +58,57 @@
 
 <script type="text/javascript">
 import BMap from 'BMap'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 export default {
   data () {
     return {
       cellName: '',
       myDis: null,
+      allPoints: [],
       points: [],
-      bm: null
+      bm: null,
+      convertor: null,
+      planTable: null,
+      NeiplanResult: null,
+      // 多边形样式
+      ploygonStyle: {
+        strokeColor: 'red',
+        strokeWeight: 1,
+        strokeOpacity: 1,
+        fillColor: 'red',
+        fillOpacity: 0.5,
+        opts: 'hello'
+      },
+      ploygonStyle_1: {
+        strokeColor: 'orange',
+        strokeWeight: 1,
+        strokeOpacity: 1,
+        fillColor: 'orange',
+        fillOpacity: 0.5,
+        opts: 'hello'
+      },
+      ploygonStyle_2: {
+        strokeColor: 'pink',
+        strokeWeight: 1,
+        strokeOpacity: 1,
+        fillColor: 'pink',
+        fillOpacity: 0.5,
+        opts: 'hello'
+      },
+      // 可视区域
+      bs: null,
+      isShowAllTable: true,
+      isShowPlanTable: false
     }
   },
   created () {
     if (sessionStorage.getItem('pname')) {
       this.setpname_prom(sessionStorage.getItem('pname'))
     }
+    // 获取邻区关系表
+    // 获取总表及规划站点
+    // 获取总表站点
+    this.getTable()
     // 在页面刷新时将vuex里的信息保存到localStorage里
     window.addEventListener('beforeunload', () => {
       sessionStorage.setItem('pname', sessionStorage.getItem('pname'))
@@ -59,6 +118,7 @@ export default {
     this.$nextTick(() => {
       this.initMap()
     })
+    console.log()
   },
   methods: {
     ...mapMutations(['setpname_prom']),
@@ -74,13 +134,15 @@ export default {
       let map = new BMap.Map('allmap')
       this.bm = map
       // 地图初始化
-      let point = new BMap.Point(104.063749, 30.659203)
-      this.bm.centerAndZoom(point, 10)
-      // this.myDis = new BMapLib.DistanceTool(this.bm) 于建
+      let point = new BMap.Point(102.772465, 24.985747)
+      this.bm.centerAndZoom(point, 14)
+      // this.myDis = new BMapLib.DistanceTool(this.bm)
       // 创建点
-      // this.bm.centerAndZoom('成都', 12)
+      // this.bm.centerAndZoom('昆明', 13)
       // 设置地图显示的城市 此项是必须设置
-      this.bm.setCurrentCity('成都')
+      // this.bm.setCurrentCity('昆明')
+      // 地图坐标转换
+      this.convertor = new BMap.Convertor()
       // 开启鼠标滚轮缩放
       this.bm.enableScrollWheelZoom(true)
       // 添加地图类型控件
@@ -90,403 +152,66 @@ export default {
           // BMAP_HYBRID_MAP
         ]
       }))
+      // 获取当前地图视图
+      const self = this
+      map.addEventListener('dragend', function () {
+        self.points = []
+        if (self.allPoints.length) {
+          self.getCounts(this)
+          self.draw(self.points, self.ploygonStyle)
+        }
+      })
+    },
+    // 画出以point2点为圆心，半径为radius，夹角从sDegree到eDegree的扇形
+    Sector1 (point2, radius, sDegree, eDegree, strokeColour, strokeWeight, Strokepacity, fillColour, fillOpacity, opts) {
+      // 创建构成多边形的点数组
+      let points = []
+      // 根据扇形的总夹角确定每步夹角度数，最大为10
+      let step = ((eDegree - sDegree) / 10) || 10
+      points.push(point2)
+      // 循环获取每步的圆弧上点的坐标，存入点数组
+      for (let i = sDegree; i < eDegree + 0.001; i += step) {
+        points.push(this.EOffsetBearing(point2, radius, i))
+      }
+      points.push(point2)
+      return points
+    },
+    // 使用数学的方法计算需要画扇形的圆弧上的点坐标
+    EOffsetBearing (point3, dist, bearing) {
+      // 计算1经度与原点的距离
+      let lngConv = this.bm.getDistance(point3, new BMap.Point(point3.lng + 0.1, point3.lat)) * 10
+      // 计算1纬度与原点的距离
+      let latConv = this.bm.getDistance(point3, new BMap.Point(point3.lng, point3.lat + 0.1)) * 10
+      // 正弦计算待获取的点的纬度与原点纬度差
+      let lat = dist * Math.sin(bearing * Math.PI / 180) / latConv
+      // 余弦计算待获取的点的经度与原点经度差
+      let lng = dist * Math.cos(bearing * Math.PI / 180) / lngConv
+      return new BMap.Point(point3.lng + lng, point3.lat + lat)
     },
     // 批量导入站点
     addMarker () {
-      // 请求数据至本地
-      this.points = [
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000131',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 31,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 111,
-          physical: 0,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 519
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 250,
-          eNBId: 459081,
-          cellId: 32,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 2,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 297
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000131',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 31,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 111,
-          physical: 0,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 519
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 250,
-          eNBId: 459081,
-          cellId: 32,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 2,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 297
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.102,
-          Latitude: 30.6675,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.105,
-          Latitude: 30.651388,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.105,
-          Latitude: 30.651388,
-          Dir: 250,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.105,
-          Latitude: 30.651388,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.149166,
-          Latitude: 30.664722,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.149166,
-          Latitude: 30.664722,
-          Dir: 250,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.149166,
-          Latitude: 30.664722,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.165555,
-          Latitude: 30.718055,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.165555,
-          Latitude: 30.718055,
-          Dir: 250,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.165555,
-          Latitude: 30.718055,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.079444,
-          Latitude: 30.713611,
-          Dir: 70,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.079444,
-          Latitude: 30.713611,
-          Dir: 180,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        },
-        {
-          ECGI: 'L1',
-          CELL: 'CDF000132',
-          Site: 'CDF0001',
-          Longitude: 104.079444,
-          Latitude: 30.713611,
-          Dir: 350,
-          eNBId: 459081,
-          cellId: 33,
-          TAC: 33029,
-          EARFCN: 1650,
-          PCI: 113,
-          physical: 1,
-          LayerSubCellId: 37,
-          physicalLayerCellIdGroup: 591
-        }
-      ]
-      let bm = this.bm
-      let convertor = new BMap.Convertor()
-      let len = this.points.length
-      let groupCount = len / 10 + 1
-
-      // 多边形样式
-      let ploygonStyle = {
-        strokeColor: 'red',
-        strokeWeight: 1,
-        strokeOpacity: 1,
-        fillColor: 'red',
-        fillOpacity: 0.5,
-        opts: 'hello'
-      }
-      // 以画多边形区域的方法画扇形区域 画出以point2点为圆心，半径为radius，夹角从sDegree到eDegree的扇形
-      function Sector1 (point2, radius, sDegree, eDegree, strokeColour, strokeWeight, Strokepacity, fillColour, fillOpacity, opts) {
-        // 创建构成多边形的点数组
-        let points = []
-        // 根据扇形的总夹角确定每步夹角度数，最大为10
-        let step = ((eDegree - sDegree) / 10) || 10
-        points.push(point2)
-        // 循环获取每步的圆弧上点的坐标，存入点数组
-        for (let i = sDegree; i < eDegree + 0.001; i += step) {
-          points.push(EOffsetBearing(point2, radius, i))
-        }
-        points.push(point2)
-        // 根据构成的点数组以及其他参数画多边形
-        // let polygon = new BMap.Polygon(
-        //   points, {strokeColor: strokeColour, strokeWeight: strokeWeight, strokeOpacity: Strokepacity, fillColor: fillColour, fillOpacity: fillOpacity})
-        if (sDegree === eDegree) {
-          let planepoint = points[1]
-          let myIcon = new BMap.Icon('../images/uav.png',
-            new BMap.Size(36, 36))
-          let marker = new BMap.Marker(planepoint, {
-            icon: myIcon
-          })
-          // 创建信息窗口对象
-          let infoWindow = new BMap.InfoWindow('信息:', opts)
-          marker.addEventListener('click', function () {
-            // 开启信息窗口
-            this.bm.openInfoWindow(infoWindow, planepoint)
-            // window.external.Test(sDegree)
-          })
-          this.bm.addOverlay(marker)
-        }
-        return points
-      }
-      // 使用数学的方法计算需要画扇形的圆弧上的点坐标
-      function EOffsetBearing (point3, dist, bearing) {
-        // 计算1经度与原点的距离
-        let lngConv = bm.getDistance(point3, new BMap.Point(point3.lng + 0.1, point3.lat)) * 10
-        // 计算1纬度与原点的距离
-        let latConv = bm.getDistance(point3, new BMap.Point(point3.lng, point3.lat + 0.1)) * 10
-        // 正弦计算待获取的点的纬度与原点纬度差
-        let lat = dist * Math.sin(bearing * Math.PI / 180) / latConv
-        // 余弦计算待获取的点的经度与原点经度差
-        let lng = dist * Math.cos(bearing * Math.PI / 180) / lngConv
-        return new BMap.Point(point3.lng + lng, point3.lat + lat)
-      }
-      // 批量撒点只能一次加载10个，所以要分批次加载
-      if (groupCount > 1) {
-        for (let i = 0; i < groupCount; i++) {
-          let pos = []
-          let pointItems = []
-          for (let j = 0; j < 10; j++) {
-            if (i * 10 + j < len) {
-              let point = new BMap.Point(this.points[(i * 10) + j].Longitude, this.points[(i * 10) + j].Latitude)
-              let pointItem = this.points[(i * 10) + j]
-              pos.push(point)
-              pointItems.push(pointItem)
-            }
-          }
-
-          convertor.translate(pos, 1, 5, function (data) {
-            console.log(data)
-            if (data.status === 0) {
-              for (let i = 0; i < data.points.length; i++) {
-                let deg = pointItems[i].Dir
-                // 画扇形
-                let oval = new BMap.Polygon(Sector1(data.points[i], 300, -deg + 90 - 20, -deg + 90 + 20), ploygonStyle)
-                // 设置覆盖物信息框内的内容
-                let infoWindowHtml = ''
-                for (var key in pointItems[i]) {
-                  infoWindowHtml += "<p style='margin:0;line-height:20px;font-size:13px;width:250px'><span style='display:inline-block;width:160px'>" + key + ':</span>' + pointItems[i][key] + '</p>'
-                }
-                let sContent = '<div style="height: 100px; overflow-y: scroll;margin-top:10px">' + infoWindowHtml + '</div>'
-                let infoWindow = new BMap.InfoWindow(sContent)
-                bm.addOverlay(oval)
-                oval.onclick = function (e) {
-                  bm.openInfoWindow(infoWindow, new BMap.Point(pointItems[i].Longitude + 0.009, pointItems[i].Latitude + 0.0035))
-                }
-                // bm.setCenter(data.points[i]) // 设置地图中心
-              }
-            }
-          })
-        }
-      }
+      this.getCounts(this.bm)
+      this.draw(this.points, this.ploygonStyle)
     },
-
+    // 设置覆盖物信息框内的内容,传入站点信息
+    setInfoWindow (pointItem) {
+      let infoWindowHtml = ''
+      for (var key in pointItem) {
+        infoWindowHtml += "<p style='margin:0;line-height:20px;font-size:13px;width:250px'><span style='display:inline-block;width:160px'>" + key + ':</span>' + pointItem[key] + '</p>'
+      }
+      let sContent = '<div style="height: 100px; overflow-y: scroll;margin-top:10px">' + infoWindowHtml + '</div>'
+      return new BMap.InfoWindow(sContent)
+    },
     // 批量删除数据
     removeMarker () {
       this.bm.clearOverlays()
       this.points = []
+    },
+    // 谷歌坐标转百度
+    translateCallback (data) {
+      if (data.status === 0) {
+        this.bm.centerAndZoom(data.points[0], 14)
+      }
     },
     // 列表中选中站名后执行
     choiceCell ($event, cellItem) {
@@ -495,16 +220,112 @@ export default {
         cellItems[i].classList.remove('choiced')
       }
       $event.target.classList.add('choiced')
-
       // 跳转至对应点位
       let point = new BMap.Point(cellItem.Longitude, cellItem.Latitude)
-      this.bm.centerAndZoom(point, 15)
+      var pointArr = []
+      pointArr.push(point)
+      this.convertor.translate(pointArr, 3, 5, this.translateCallback)
+    },
+    // 获取所需表格
+    getTable () {
+      var heads = {
+        headers: {
+          'username': JSON.parse(sessionStorage.user).username,
+          'projectname': sessionStorage.pname,
+          'filetype': 'map'
+        }
+      }
+      this.$http.post(
+        this.user.httppath + 'api/Geo/GetAllTable?neifiletype=lte',
+        { neifiletype: 'lte' },
+        heads
+      ).then((res) => {
+        console.log(res)
+        this.allPoints = res.allTable.slice(0, 1000)
+        this.planTable = res.planTable
+      })
+    },
+    // 获取视区范围,并判断是否在可是在可视区域
+    getCounts (map) {
+      this.bs = map.getBounds()
+      this.allPoints.forEach((item) => {
+        let point = new BMap.Point(item.Longitude, item.Latitude)
+        if (this.bs.containsPoint(point)) {
+          this.points.push(item)
+        }
+      })
+    },
+    //
+    draw (points, ploygonStyle) {
+      let bm = this.bm
+      let len = points.length
+      let groupCount = len / 10 + 1
+
+      // 批量撒点只能一次加载10个，所以要分批次加载
+      if (groupCount > 1) {
+        for (let i = 0; i < groupCount; i++) {
+          let pos = []
+          let pointItems = []
+          for (let j = 0; j < 10; j++) {
+            if (i * 10 + j < len) {
+              // 设置百度经纬度
+              let point = new BMap.Point(points[(i * 10) + j].Longitude, points[(i * 10) + j].Latitude)
+              let pointItem = points[(i * 10) + j]
+              pos.push(point)
+              pointItems.push(pointItem)
+            }
+          }
+          const self = this
+          this.convertor.translate(pos, 1, 5, function (data) {
+            if (data.status === 0) {
+              for (let i = 0; i < data.points.length; i++) {
+                let deg = pointItems[i].Dir
+                // 画扇形
+                // 以画多边形区域的方法画扇形区域
+                let oval = new BMap.Polygon(self.Sector1(data.points[i], 100, -deg + 90 - 20, -deg + 90 + 20), ploygonStyle)
+                // 设置覆盖物信息框内的内容,传入站点信息
+                let infoWindow = self.setInfoWindow(pointItems[i])
+                bm.addOverlay(oval)
+                // 点击单个覆盖物时显示信息内容
+                oval.onclick = function (e) {
+                  bm.openInfoWindow(infoWindow, new BMap.Point(data.points[i].lng, data.points[i].lat))
+                }
+              }
+            }
+          })
+        }
+      }
+    },
+    showNeiplan () {
+      this.draw(this.planTable, this.ploygonStyle_1)
+    },
+    getNeiplanResult () {
+      var heads = {
+        headers: {
+          'username': JSON.parse(sessionStorage.user).username,
+          'projectname': sessionStorage.pname,
+          'filetype': 'map'
+        }
+      }
+      this.$http.post(
+        this.user.httppath + 'api/Geo/GetNeighborCell?neifiletype=lte',
+        {
+          servingcell: '713768_02'
+        },
+        heads
+      ).then((res) => {
+        this.NeiplanResult = res
+        this.draw(this.NeiplanResult, this.ploygonStyle_2)
+      })
     }
   },
   computed: {
+    ...mapState({
+      user: (state) => state.user
+    }),
     filterPoints () {
-      return this.points.filter((data) => {
-        return data.CELL.match(this.cellName.toUpperCase())
+      return this.allPoints.filter((data) => {
+        return data.Cell.match(this.cellName.toUpperCase())
       })
     },
 
@@ -572,7 +393,12 @@ li {
   padding-bottom: 5px;
   cursor: pointer;
 }
+.toolBar{
+  line-height: 30px;
+}
 .map-content {
+  width: 500px;
+  height: 400px;
   flex: 1;
 }
 button.addMarker,
@@ -583,7 +409,7 @@ button.removeMarker {
 button.rangeBtn {
   position: absolute;
   right: 119px;
-  top: 30px;
+  top: 80px;
   border: 1px solid rgb(139, 164, 220);
   background: white;
   padding: 2px 6px;

@@ -87,17 +87,15 @@ export default {
       {},
       heads
     ).then((response) => {
-      this.needTabel = response
-      this.total = this.needTabel.length
-      for (let i = 0; i < response.length; i++) {
-        if (response[i].isOk === 'True') {
-          this.table.push(this.needTabel[i])
+      if (response !== '不能操作该工程') {
+        this.needTabel = response
+        this.total = this.needTabel.length
+        for (let i = 0; i < response.length; i++) {
+          if (response[i].isOk === 'True') {
+            this.table.push(this.needTabel[i])
+          }
         }
       }
-      // this.$refs.seltab.multipleSelection = this.table
-      // setTimeout(() => {
-      //   this.$refs.seltab.toggleSelection(this.table)
-      // }, 250)
     }).catch((error) => {
       this.$notify({
         title: '警告',
@@ -124,6 +122,7 @@ export default {
         })
         return
       }
+      console.log('ceshi')
       this.dbInput()
     },
     dbInput () {
@@ -133,6 +132,7 @@ export default {
       for (var key in this.multipleSelection) {
         tables.push(this.multipleSelection[key].title)
       }
+      console.log(tables)
       this.$http.post(this.user.httppath + '/api/Bulkcm/BulkParse',
         { tableName: tables },
         { headers: this.head }

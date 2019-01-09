@@ -23,14 +23,17 @@
     <el-main>
       <el-container>
         <el-aside width="300px">
+          <br>
+          <br>
+          <br>
           <v-selectTable ref='kpitable'
                          :tableData="pmData"
                          :columns="pmDataColums"> </v-selectTable>
-          <!-- @muEvent="test" -->
         </el-aside>
         <el-main>
           <el-main>
-            <el-table :data="result"
+            <v-pageTable :tableData="result"> </v-pageTable>
+            <!-- <el-table :data="result"
                       style="width: 100%">
               <el-table-column :label="key"
                                v-for="(date, key) in result[0]"
@@ -39,7 +42,7 @@
                   {{scope.row[key]}}
                 </template>
               </el-table-column>
-            </el-table>
+            </el-table> -->
           </el-main>
         </el-main>
       </el-container>
@@ -50,9 +53,11 @@
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import outputTable from '../../basic/outputTable.js'
 import selectTable from '../../basic/selectTable.vue'
+import pageTable from '../../basic/pageTable.vue'
 export default {
   components: {
-    'v-selectTable': selectTable
+    'v-selectTable': selectTable,
+    'v-pageTable': pageTable
   },
   computed: {
     ...mapGetters(['getpm_kpitypety']),

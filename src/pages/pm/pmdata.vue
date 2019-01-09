@@ -16,6 +16,8 @@
       </el-aside>
       <el-container>
         <el-main>
+          <export-table :tableData="data_list"></export-table>
+          <br>
           <el-table :data="data_list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                     style="width: 100%">
             <el-table-column :label="key"
@@ -44,6 +46,7 @@
 </template>
 <script>
 import { mapState, mapMutations, mapGetters } from 'vuex'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
@@ -52,6 +55,9 @@ export default {
       pm: (state) => state.pm
     }),
     ...mapGetters(['getpm_systable'])
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -109,8 +115,6 @@ export default {
     },
     filterNode (value, data) {
       if (!value) return true
-      console.log(value)
-      console.log(data)
       return data.label.indexOf(value) !== -1
     },
     handleSizeChange (val) {

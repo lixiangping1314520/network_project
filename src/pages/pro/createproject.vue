@@ -1,7 +1,6 @@
 <template>
   <el-container>
-    <el-form 
-             ref="form"
+    <el-form ref="form"
              :model="form"
              label-width="100px">
       <h2 style="text-align: center"> 创建项目</h2>

@@ -1,61 +1,55 @@
 <template>
   <el-container>
-    <el-header>
-      <br>
-      <export-table :tableData="result"></export-table>
-      </br>
-    </el-header>
+    <el-aside width="300px">
+      <el-table @row-click="handleRowChange"
+                :highlight-current-row="true"
+                :data="currentPageData_1"
+                style="width: 300px">
+        <el-table-column prop="tableName"
+                         label="表名称"
+                         :show-overflow-tooltip="true">
+        </el-table-column>
+      </el-table>
+      <div class="pagination-wrapper">
+        <el-pagination layout="prev, pager, next"
+                       :total="pageNum_1"
+                       :pager-count="5"
+                       :page-size="8"
+                       @current-change="handleCurrentChange_1">
+        </el-pagination>
+      </div>
+    </el-aside>
     <el-main>
-      <el-container>
-        <el-aside width="300px">
-          <el-table @row-click="handleRowChange"
-                    :highlight-current-row="true"
-                    :data="currentPageData_1"
-                    style="width: 300px">
-            <el-table-column prop="tableName"
-                             label="表名称"
-                             :show-overflow-tooltip="true">
-            </el-table-column>
-          </el-table>
-          <div class="pagination-wrapper">
-            <el-pagination layout="prev, pager, next"
-                           :total="pageNum_1"
-                           :pager-count="5"
-                           :page-size="8"
-                           @current-change="handleCurrentChange_1">
-            </el-pagination>
-          </div>
-        </el-aside>
-        <el-main>
-          <el-main>
-            <el-table :data="currentPageData_2"
-                      style="width: 100%">
-              <el-table-column :label="key"
-                               v-for="(date, key) in currentPageData_2[0]"
-                               :key="key"
-                               :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  {{scope.row[key]}}
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="pagination-wrapper">
-              <el-pagination layout="prev, pager, next"
-                             :total="pageNum_2"
-                             :pager-count="5"
-                             :page-size="8"
-                             @current-change="handleCurrentChange_2">
-              </el-pagination>
-            </div>
-          </el-main>
-        </el-main>
-      </el-container>
+      <el-main>
+        <v-exportTable :tableData="result"></v-exportTable>
+        </br>
+        <el-table :data="currentPageData_2"
+                  style="width: 100%">
+          <el-table-column :label="key"
+                           v-for="(date, key) in currentPageData_2[0]"
+                           :key="key"
+                           :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{scope.row[key]}}
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination-wrapper">
+          <el-pagination layout="prev, pager, next"
+                         :total="pageNum_2"
+                         :pager-count="5"
+                         :page-size="8"
+                         @current-change="handleCurrentChange_2">
+          </el-pagination>
+        </div>
+      </el-main>
     </el-main>
   </el-container>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
 import exportTable from '../../basic/exportTable'
+import pageTable from '../../basic/pageTable.vue'
 export default {
   computed: {
     ...mapState({
@@ -64,7 +58,8 @@ export default {
     })
   },
   components: {
-    exportTable
+    'v-exportTable': exportTable,
+    'v-pageTable': pageTable
   },
   destroyed () {
   },
@@ -81,7 +76,6 @@ export default {
     }
   },
   created () {
-    console.log('bulkcm crate 函数')
     if (sessionStorage.getItem('pname')) {
       this.setpname_prom(sessionStorage.getItem('pname'))
     }
@@ -107,13 +101,12 @@ export default {
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_1 (pageIndex) {
       // pageIndex = pageIndex || 1
-      let pageSize = 8
+      let pageSize = 13
       this.currentPageData_1 = this.tables.slice((pageIndex - 1) * pageSize, (pageIndex - 1) * pageSize + pageSize)
     },
     initPageNum_1 () {
       this.pageNum_1 = this.tables.length
     },
-
     // 点击跳转页面，显示对应的数据
     handleCurrentChange_2 (pageIndex) {
       // pageIndex = pageIndex || 1

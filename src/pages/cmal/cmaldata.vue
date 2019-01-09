@@ -1,13 +1,5 @@
 <template>
   <el-container>
-    <el-header>
-      </br>
-      <el-button type="primary"
-                 icon="el-icon-search"
-                 size="mini"
-                 @click="output()">导出</el-button>
-      </br> </br>
-    </el-header>
     <el-main>
       <el-container>
         <el-aside width="300px">
@@ -22,19 +14,19 @@
           </el-table>
         </el-aside>
         <el-main>
-          <el-main>
-            <el-table :data="result"
-                      style="width: 100%">
-              <el-table-column :label="key"
-                               v-for="(date, key) in result[0]"
-                               :key="key"
-                               :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  {{scope.row[key]}}
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-main>
+          <export-table :tableData="result"></export-table>
+          <br>
+          <el-table :data="result"
+                    style="width: 100%">
+            <el-table-column :label="key"
+                             v-for="(date, key) in result[0]"
+                             :key="key"
+                             :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{scope.row[key]}}
+              </template>
+            </el-table-column>
+          </el-table>
         </el-main>
       </el-container>
     </el-main>
@@ -42,13 +34,16 @@
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'
-import outputTable from '../../basic/outputTable.js'
+import exportTable from '../../basic/exportTable'
 export default {
   computed: {
     ...mapState({
       prom: (state) => state.prom,
       user: (state) => state.user
     })
+  },
+  components: {
+    exportTable
   },
   data () {
     return {
@@ -72,19 +67,15 @@ export default {
       {},
       this.headers
     ).then((response) => {
-      console.log(response)
-      this.tables = response
+      if (response !== '不能操作该工程') {
+        this.tables = response
+      }
     }).catch((error) => {
       console.log(error)
     })
   },
   methods: {
     ...mapMutations(['setpname_prom']),
-    output () {
-      if (this.result.length !== 0) {
-        outputTable(this.result)
-      }
-    },
     handleSelectionChange () {
       console.log('handleSelectionChange 函数')
     },

@@ -1,10 +1,19 @@
+// import Axios from 'axios'
+
+// Axios.post('http://132.232.239.97:8080/getServerIpById.action?id=1', {})
+//   .then(response => {
+//     console.log(response)
+//   }).catch(error => {
+//     this.httppath = 'http://119.4.177.220:8081/'
+//     console.log(error)
+//   })
+
 const state = {
   user: {},
   isLogin: false,
   regisiterUser: [],
   // httppath: 'http://192.168.0.134:2861'
-  httppath: 'http://192.168.0.237:2860'
-  // httppath: config2
+  httppath: config.httppath
 }
 
 const actions = {
@@ -57,6 +66,9 @@ const actions = {
 }
 
 const mutations = {
+  sethttppath (state, obj) {
+    state.httppath = obj
+  },
   SET_DOING_LOGIN (state, isLogin) {
     state.isLogin = isLogin
   },
@@ -75,8 +87,25 @@ const mutations = {
   }
 }
 
+// const getters = {
+//   getIp: state => {
+//     var thisIp = ''
+//     this.$http.post('http://132.232.239.97:8080/getServerIpById.action?id=1', {})
+//       .then(response => {
+//         console.log(response)
+//         thisIp = response
+//       })
+//       .catch(error => {
+//         console.log(error)
+//       })
+//     this.httppath = thisIp
+//     return thisIp
+//   }
+// }
+
 export default {
   state,
   actions,
   mutations
+  // getters
 }

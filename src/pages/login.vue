@@ -44,7 +44,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   name: 'login',
   computed: {
@@ -65,6 +65,7 @@ export default {
   },
   methods: {
     ...mapActions(['login']),
+    ...mapMutations(['sethttppath']),
     handleLogin () {
       if (!this.username || !this.password) {
         this.$notify({
@@ -102,6 +103,8 @@ export default {
       //     this.$router.push({name: 'home'})
       //   }
       // })
+
+      console.log(this.user.httppath)
       this.$http.post(this.user.httppath + '/api/WebUser/Login', loginUser).then(res => {
         console.log(res)
         if (res === '不存在该用户') {
@@ -134,8 +137,19 @@ export default {
     }
   },
   created () {
-    console.log('asdasd')
-    console.log(this.$config)
+    // this.$http.post('http://132.232.239.97:8080/getServerIpById?id=1', {})
+    //   .then(response => {
+    //     console.log('ceshi')
+    //     console.log(response)
+    //   }).catch(error => {
+    //     this.httppath = 'http://119.4.177.220:8081/'
+    //     console.log(error)
+    //   })
+
+    // console.log('asdasd')
+    // console.log(config.name)
+    // 给http 赋值
+    // this.sethttppath('asd')
   }
 }
 </script>

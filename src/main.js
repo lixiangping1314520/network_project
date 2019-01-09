@@ -8,7 +8,7 @@ import NProgress from 'nprogress'
 // 引入echarts
 import echarts from 'echarts'
 
-import config2 from '../static/config2.js'
+// import config2 from '../static/config2.js'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -83,6 +83,16 @@ Axios.defaults.validateStatus = status => {
 }
 // 设置请求token
 Axios.interceptors.request.use(config => {
+  // var test = ''
+  // Axios.$http
+  //   .post('http://132.232.239.97:8080/getServerIpById.action?id=1', {})
+  //   .then((response) => {
+  //     console.log('跨域')
+  //   }).catch((error) => {
+  //     console.log('不跨域')
+  //     console.log(error)
+  //   })
+  // console.log(config)
   var token = sessionStorage.getItem('token')
   config.headers['Authorization'] = 'bearer ' + token
   return config
@@ -91,8 +101,6 @@ Axios.interceptors.request.use(config => {
 // 接口错误拦截
 Axios.interceptors.response.use(
   res => {
-    console.log('返回值')
-    console.log(res)
     if (res.status === 401) {
       app &&
         app.$message({
@@ -120,8 +128,6 @@ Axios.interceptors.response.use(
 
 Vue.prototype.$http = Axios
 Vue.http = Axios
-// Vue.prototype.$apiPrefixes = config['ip']
-Vue.prototype.$config = config2
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

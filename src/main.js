@@ -8,7 +8,7 @@ import NProgress from 'nprogress'
 // 引入echarts
 import echarts from 'echarts'
 
-import config2 from '../static/config2.js'
+// import config2 from '../static/config2.js'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -118,8 +118,6 @@ Axios.interceptors.response.use(
 
 Vue.prototype.$http = Axios
 Vue.http = Axios
-// Vue.prototype.$apiPrefixes = config['ip']
-Vue.prototype.$config = config2
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

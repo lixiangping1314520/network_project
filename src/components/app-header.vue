@@ -30,8 +30,10 @@
             <span class="caret"></span>
           </a>
           <m-dropdown-panel>
-            <m-dropdown-item><span style="display: inline-block;" @click="handleuserMessage">用户信息</span></m-dropdown-item>
-            <m-dropdown-item><span style="display: inline-block;" @click="handleRest">修改密码</span></m-dropdown-item>
+            <m-dropdown-item><span style="display: inline-block;"
+                    @click="handleuserMessage">用户信息</span></m-dropdown-item>
+            <m-dropdown-item><span style="display: inline-block;"
+                    @click="handleRest">修改密码</span></m-dropdown-item>
             <!-- <m-dropdown-item disabled>注销</m-dropdown-item> -->
             <div class="test-line"></div>
             <!-- <m-dropdown-item name="login">退出账号</m-dropdown-item> -->
@@ -74,10 +76,12 @@
       </m-nav-item>
     </m-nav>
 
-    <div class="reset" v-show="resetPassword">
+    <div class="reset"
+         v-show="resetPassword">
       <reset-password @closeReset="closeReset"></reset-password>
     </div>
-    <div class="userMessage" v-show="userMessage">
+    <div class="userMessage"
+         v-show="userMessage">
       <user-message @closeuserMessage="closeuserMessage"></user-message>
     </div>
   </m-navbar>
@@ -90,7 +94,7 @@ import {
   exitFullscreen
 } from '@/utils'
 import themes from './theme'
-import ResetPassword from '../pages/resetPassword'
+import ResetPassword from '../pages/resetPassWord'
 import UserMessage from '../pages/userMessage'
 export default {
   name: 'app-header',
@@ -179,7 +183,8 @@ export default {
 .side-switch:hover {
   color: #fff;
 }
-.reset, .userMessage{
+.reset,
+.userMessage {
   position: fixed;
   top: 0;
   bottom: 0;

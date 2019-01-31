@@ -35,7 +35,7 @@ module.exports = {
     "no-mixed-spaces-and-tabs": ['warn'],
     "no-implicit-globals:": 0
   },
-  globals:{
+  globals: {
     'config': true
   }
 }

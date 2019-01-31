@@ -182,7 +182,8 @@ export default {
       resultTableName: [{ 'tableName': '扩容结果' }, { 'tableName': '扩容错误信息' }, { 'tableName': '错误信息' }],
       oneTable: [],
       tableName: '',
-      oneTableData: []
+      oneTableData: [],
+      tablesData: []
     }
   },
   created () {

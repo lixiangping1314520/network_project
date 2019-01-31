@@ -1,9 +1,3 @@
-console.log('load config.js')
-
-var jQuery = {
-  name: 'hello'
-}
-
 var config = {
-  httppath: 'http://192.168.31.235:2860/'
+  httppath: 'http://172.16.201.15:8081/'
 }

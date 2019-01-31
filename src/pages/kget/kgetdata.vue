@@ -1,50 +1,44 @@
 <template>
   <el-container>
-    <el-header>
-      <br>
+       <br>
       <export-table :tableData="result"></export-table>
-    </el-header>
-    <el-main>
-      <el-container>
-        <el-aside width="300px">
-          <el-table @row-click="handleRowChange"
-                    :highlight-current-row="true"
-                    :data="showTables"
-                    style="width: 300px">
-            <el-table-column :show-overflow-tooltip="true"
-                             prop="tableName"
-                             label="表名称">
+      <br>
+      <el-aside width="300px">
+        <el-table @row-click="handleRowChange"
+                  :highlight-current-row="true"
+                  :data="showTables"
+                  style="width: 300px">
+          <el-table-column :show-overflow-tooltip="true"
+                           prop="tableName"
+                           label="表名称">
+          </el-table-column>
+        </el-table>
+
+        <div class="pagination-wrapper">
+          <el-pagination layout="prev, pager, next"
+                         :pager-count="5"
+                         :total="pageNum"
+                         @current-change="handleCurrentChange">
+          </el-pagination>
+        </div>
+      </el-aside>
+      <el-main>
+        <el-main>
+          <el-table :data="result"
+                    style="width: 100%">
+            <el-table-column :label="key"
+                             v-for="(date, key) in result[0]"
+                             :key="key"
+                             :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{scope.row[key]}}
+              </template>
             </el-table-column>
           </el-table>
-
-          <div class="pagination-wrapper">
-            <el-pagination layout="prev, pager, next"
-                           :pager-count="5"
-                           :total="pageNum"
-                           @current-change="handleCurrentChange">
-            </el-pagination>
           </div>
-
-        </el-aside>
-        <el-main>
-          <el-main>
-            <el-table :data="result"
-                      style="width: 100%">
-              <el-table-column :label="key"
-                               v-for="(date, key) in result[0]"
-                               :key="key"
-                               :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  {{scope.row[key]}}
-                </template>
-              </el-table-column>
-            </el-table>
-            </div>
-          </el-main>
         </el-main>
-      </el-container>
-    </el-main>
-  </el-container>
+      </el-main>
+    </el-container>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex'

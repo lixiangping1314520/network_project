@@ -173,6 +173,7 @@ export default {
   display: block;
   margin-bottom: -1px;
   margin-top: 10px;
+  line-height: 40px;
 }
 .fullscreen {
   width: 100%;
@@ -185,7 +186,7 @@ export default {
 }
 .register-box {
   position: relative;
-  width: 400px;
+  width: 500px;
   margin: 0 auto;
   padding: 0px 30px;
   background: white;
@@ -197,6 +198,7 @@ export default {
   display: inline-block;
   font-size: 16px;
   margin: 0;
+  line-height: 40px;
 }
 .register-box .text-tips {
   text-align: center;

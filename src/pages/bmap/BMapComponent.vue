@@ -1,7 +1,7 @@
 <template>
   <div class="map-wrapper">
     <div class="map-menu">
-      <p class="cell-list-header">站点列表</p>
+      <el-row class="cell-list-header">站点列表</el-row>
       <input type="text"
              name="cellName"
              class="searchCell"
@@ -12,7 +12,7 @@
       <ul class="cell-list"
           v-else>
         <li>
-          <h3 @click="{{isShowAllTable = !isShowAllTable}}" style="cursor: pointer;">总表</h3>
+          <div @click="{{isShowAllTable = !isShowAllTable}}" style="cursor: pointer;">总表</div>
           <ul class="list-item" v-show="isShowAllTable">
             <li class="cell-item"
               v-for="cellItem in filterPoints"
@@ -22,7 +22,7 @@
           </ul>
         </li>
         <li>
-          <h3 @click="{{isShowPlanTable = !isShowPlanTable}}" style="cursor: pointer;">邻区规划站点</h3>
+          <div @click="{{isShowPlanTable = !isShowPlanTable}}" style="cursor: pointer;">邻区规划站点</div>
           <ul class="list-item" v-show="isShowPlanTable">
             <li class="cell-item"
               v-for="cellItem in planTable"
@@ -33,26 +33,22 @@
         </li>
       </ul>
     </div>
-    <div class="map-content">
-      <div class="toolBar">
-        <div class="neiplan">
-          <button @click="showNeiplan">显示规划点位</button>
-          <button @click.prevent="addMarker">显示总表</button>
-          <button @click="getNeiplanResult">获取邻区规划</button>
-        </div>
-      </div>
+    <el-row class="map-content">
+      <el-row class="toolBar">
+        <el-button type="primary" size="mini" @click="showNeiplan">显示规划点位</el-button>
+        <el-button type="primary" size="mini" @click.prevent="addMarker">显示总表</el-button>
+        <el-button type="primary" size="mini" @click="getNeiplanResult">获取邻区规划</el-button>
+      </el-row>
       <div id="allmap"
-           style="height: 400px;">
+           style="height: 400px; border: 1px solid lightgray">
       </div>
       <!-- <div id="r-result">请输入:<input type="text" id="suggestId" size="20" value="百度" style="width:150px;" @highlight="" /></div> -->
       <!-- <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div> -->
       <button @click.prevent="rangeBtn"
               class="rangeBtn">测距</button>
-      <button @click.prevent="addMarker"
-              class="addMarker">导入数据</button>
-      <button @click.prevent="removeMarker"
-              class="removeMarker">删除数据</button>
-    </div>
+      <el-button @click.prevent="removeMarker"
+              class="addMarker">清空地图数据</el-button>
+    </el-row>
   </div>
 </template>
 
@@ -98,7 +94,8 @@ export default {
       // 可视区域
       bs: null,
       isShowAllTable: true,
-      isShowPlanTable: false
+      isShowPlanTable: false,
+      currentCell: ''
     }
   },
   created () {
@@ -136,7 +133,7 @@ export default {
       // 地图初始化
       let point = new BMap.Point(102.772465, 24.985747)
       this.bm.centerAndZoom(point, 14)
-      // this.myDis = new BMapLib.DistanceTool(this.bm)
+      this.myDis = new BMapLib.DistanceTool(map)
       // 创建点
       // this.bm.centerAndZoom('昆明', 13)
       // 设置地图显示的城市 此项是必须设置
@@ -148,8 +145,8 @@ export default {
       // 添加地图类型控件
       this.bm.addControl(new BMap.MapTypeControl({
         mapTypes: [
-          // BMAP_NORMAL_MAP, 于建
-          // BMAP_HYBRID_MAP
+          BMAP_NORMAL_MAP,
+          BMAP_HYBRID_MAP
         ]
       }))
       // 获取当前地图视图
@@ -224,7 +221,7 @@ export default {
       let point = new BMap.Point(cellItem.Longitude, cellItem.Latitude)
       var pointArr = []
       pointArr.push(point)
-      this.convertor.translate(pointArr, 3, 5, this.translateCallback)
+      this.convertor.translate(pointArr, 1, 5, this.translateCallback)
     },
     // 获取所需表格
     getTable () {
@@ -241,7 +238,7 @@ export default {
         heads
       ).then((res) => {
         console.log(res)
-        this.allPoints = res.allTable.slice(0, 1000)
+        this.allPoints = res.allTable.slice(0, 10000)
         this.planTable = res.planTable
       })
     },
@@ -289,6 +286,7 @@ export default {
                 // 点击单个覆盖物时显示信息内容
                 oval.onclick = function (e) {
                   bm.openInfoWindow(infoWindow, new BMap.Point(data.points[i].lng, data.points[i].lat))
+                  self.currentCell = pointItems[i]
                 }
               }
             }
@@ -300,6 +298,9 @@ export default {
       this.draw(this.planTable, this.ploygonStyle_1)
     },
     getNeiplanResult () {
+      if (!this.currentCell) {
+        return
+      }
       var heads = {
         headers: {
           'username': JSON.parse(sessionStorage.user).username,
@@ -310,12 +311,46 @@ export default {
       this.$http.post(
         this.user.httppath + 'api/Geo/GetNeighborCell?neifiletype=lte',
         {
-          servingcell: '713768_02'
+          servingcell: this.currentCell.Cell
         },
         heads
       ).then((res) => {
         this.NeiplanResult = res
+        if (res === '没有服务小区') {
+          this.$notify({
+            title: '警告',
+            message: '没有找到服务小区',
+            type: 'warning'
+          })
+          return
+        }
         this.draw(this.NeiplanResult, this.ploygonStyle_2)
+        var points = []
+        for (var i = 0; i < this.NeiplanResult.length; i++) {
+          var pointArray = []
+          var point = new BMap.Point(this.NeiplanResult[i].Longitude, this.NeiplanResult[i].Latitude)
+          pointArray.push(point)
+          this.convertor.translate(pointArray, 1, 5, (data) => {
+            points.push(data.points[0])
+          })
+        }
+        setTimeout(() => {
+          var stratPoint = []
+          stratPoint.push(new BMap.Point(this.currentCell.Longitude, this.currentCell.Latitude))
+          this.convertor.translate(stratPoint, 1, 5, (data) => {
+            for (var i = 0; i < points.length; i++) {
+              // 与邻区规划站点连线
+              const point1 = new BMap.Point(data.points[0].lng, data.points[0].lat)
+              const point2 = new BMap.Point(points[i].lng, points[i].lat)
+              var polyline = new BMap.Polyline([
+                point1,
+                point2
+              ], {strokeColor: 'red', strokeWeight: 1, strokeOpacity: 0.5})
+              // 创建折线
+              this.bm.addOverlay(polyline)
+            }
+          })
+        }, 500)
       })
     }
   },
@@ -338,10 +373,6 @@ export default {
 </script>
 
 <style type="text/css" scoped>
-* {
-  margin: 0;
-  padding: 0;
-}
 ul,
 li {
   list-style-type: none;
@@ -386,6 +417,9 @@ li {
   border-radius: 10px;
   outline: none;
 }
+.list-item{
+  padding-left: 10px;
+}
 .cell-item.choiced {
   color: #409eff;
 }
@@ -394,7 +428,7 @@ li {
   cursor: pointer;
 }
 .toolBar{
-  line-height: 30px;
+  line-height: 50px;
 }
 .map-content {
   width: 500px;
@@ -408,8 +442,8 @@ button.removeMarker {
 }
 button.rangeBtn {
   position: absolute;
-  right: 119px;
-  top: 80px;
+  right: 90px;
+  top: 61px;
   border: 1px solid rgb(139, 164, 220);
   background: white;
   padding: 2px 6px;

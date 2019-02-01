@@ -26,27 +26,31 @@
                    v-model="password">
           </div>
         </div>
+        <el-row class="help-box">
+          <el-button size="mini" @click.prevent="goRegister">快速注册</el-button>
+           <el-button size="mini" @click.prevent="handleResetPassWord">忘记密码</el-button>
+        </el-row>
         <div class="m-btn-box">
           <button class="m-btn sub select-none"
                   @click.prevent="handleLogin"
                   v-loading="isLoging">登录</button>
         </div>
       </form>
-      <p class="text-tips">没有有账号？</p>
-      <a @click.prevent="goRegister"
-         class="m-btn m-btn-text">快速注册</a>
-      <!-- <p class="text-tips">
-      <i class="fa fa-meetup" style="color: #29ABE2"></i>&nbsp;
-      <span class="footer-text">{{appName}} &nbsp;<el-tag size="mini">{{version}}</el-tag> <br>©make by <a href="https://www.github.com/mengdu" target="_blank">{{author}}</a>
-      </span>
-    </p> -->
+    </div>
+    <div class="reset"
+         v-show="resetPassword">
+      <reset-password @closeReset="closeReset"></reset-password>
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import ResetPassword from './resetPassWord'
 export default {
   name: 'login',
+  components: {
+    ResetPassword
+  },
   computed: {
     ...mapState({
       prom: (state) => state.prom,
@@ -60,12 +64,12 @@ export default {
       isLoging: false,
       author: window.APP_INFO.author,
       version: window.APP_INFO.version,
-      appName: window.APP_INFO.appName
+      appName: window.APP_INFO.appName,
+      resetPassword: false
     }
   },
   methods: {
     ...mapActions(['login']),
-    ...mapMutations(['sethttppath']),
     handleLogin () {
       if (!this.username || !this.password) {
         this.$notify({
@@ -80,31 +84,6 @@ export default {
         username: this.username,
         password: this.password
       }
-      // this.login({
-      //   username: this.username,
-      //   password: this.password,
-      //   ticket: 'asdaasdadad'
-      // })
-      // this.$notify({
-      //   title: '成功',
-      //   message: '登陆成功',
-      //   type: 'success'
-      // })
-      // this.$router.push({ name: 'home' })
-      // 判断密码和名字是否正确与一致
-      // let users = this.$store.state.user.regisiterUser
-      // users.forEach((userItem) => {
-      //   if (userItem.username === this.username && userItem.password === this.password) {
-      //     this.login({
-      //       username: this.username,
-      //       password: this.password
-      //     })
-      //     this.$message.success('登录成功')
-      //     this.$router.push({name: 'home'})
-      //   }
-      // })
-
-      console.log(this.user.httppath)
       this.$http.post(this.user.httppath + '/api/WebUser/Login', loginUser).then(res => {
         console.log(res)
         if (res === '不存在该用户') {
@@ -134,29 +113,20 @@ export default {
     },
     goRegister () {
       this.$router.push({ name: 'p-register' })
+    },
+    closeReset () {
+      this.resetPassword = false
+    },
+    handleResetPassWord () {
+      this.resetPassword = true
     }
-  },
-  created () {
-    // this.$http.post('http://132.232.239.97:8080/getServerIpById?id=1', {})
-    //   .then(response => {
-    //     console.log('ceshi')
-    //     console.log(response)
-    //   }).catch(error => {
-    //     this.httppath = 'http://119.4.177.220:8081/'
-    //     console.log(error)
-    //   })
-
-    // console.log('asdasd')
-    // console.log(config.name)
-    // 给http 赋值
-    // this.sethttppath('asd')
   }
 }
 </script>
 <style type="text/css">
 .m-list-group {
   padding: 0;
-  margin: 0 0 20px;
+  margin: 0;
 }
 .m-list-group .m-list-group-item {
   position: relative;
@@ -232,14 +202,6 @@ export default {
   box-sizing: border-box;
   text-decoration: none;
 }
-.login-box .m-btn.m-btn-text {
-  display: inline-block;
-  background: #fff;
-  color: #1bbd70;
-  padding: 5px;
-  font-size: 16px;
-  width: 40%;
-}
 .login-box .m-btn.m-btn-text:hover {
   background-color: #f4f5f5;
 }
@@ -250,5 +212,16 @@ export default {
   .login-box {
     width: auto;
   }
+}
+.help-box{
+  text-align: center;
+  margin: 10px 0;
+}
+.reset{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>

@@ -75,6 +75,10 @@
         </m-dropdown>
       </m-nav-item>
     </m-nav>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4e7dd54bb1eae08e9ef6d890995fdcf790718225
     <div class="reset"
          v-show="resetPassword">
       <reset-password @closeReset="closeReset"></reset-password>
@@ -184,8 +188,12 @@ export default {
 }
 .reset,
 .userMessage {
+<<<<<<< HEAD
   /* position: fixed; */
   position: relative;;
+=======
+  position: fixed;
+>>>>>>> 4e7dd54bb1eae08e9ef6d890995fdcf790718225
   top: 0;
   bottom: 0;
   left: 0;

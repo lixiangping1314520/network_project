@@ -9,9 +9,6 @@ import NProgress from 'nprogress'
 import echarts from 'echarts'
 
 // import config2 from '../static/config2.js'
-import App from './App'
-import store from './store'
-import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/font-awesome-4.7.0/css/font-awesome.min.css'
 import '@/assets/css/main.css'
@@ -19,6 +16,9 @@ import '@/assets/css/scrollbar.css'
 import '@/assets/css/reset.css'
 import 'nprogress/nprogress.css'
 import 'animate.css'
+import App from './App'
+import store from './store'
+import router from './router'
 
 import DropdownPlugin from './m/dropdown'
 import NavbarPlugin from './m/navbar'
@@ -58,16 +58,16 @@ Vue.use(MContainer)
 // Vue.use(saveState)
 
 var whiteList = ['demo', 'p-login', 'login', 'p-register']
-router.beforeEach((to, from, next) => {
-  NProgress.start()
-  var token = sessionStorage.getItem('token')
-  if (!token && whiteList.indexOf(to.name) === -1) {
-    app && app.$message.warning('未授权，请登陆授权后继续')
-    NProgress.done()
-    return next({ name: 'login' })
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   NProgress.start()
+//   var token = sessionStorage.getItem('token')
+//   if (!token && whiteList.indexOf(to.name) === -1) {
+//     app && app.$message.warning('未授权，请登陆授权后继续')
+//     NProgress.done()
+//     return next({ name: 'login' })
+//   }
+//   next()
+// })
 
 router.afterEach(transition => {
   setTimeout(() => {
@@ -83,16 +83,6 @@ Axios.defaults.validateStatus = status => {
 }
 // 设置请求token
 Axios.interceptors.request.use(config => {
-  // var test = ''
-  // Axios.$http
-  //   .post('http://132.232.239.97:8080/getServerIpById.action?id=1', {})
-  //   .then((response) => {
-  //     console.log('跨域')
-  //   }).catch((error) => {
-  //     console.log('不跨域')
-  //     console.log(error)
-  //   })
-  // console.log(config)
   var token = sessionStorage.getItem('token')
   config.headers['Authorization'] = 'bearer ' + token
   return config

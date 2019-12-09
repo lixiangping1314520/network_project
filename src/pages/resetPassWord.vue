@@ -158,12 +158,6 @@ export default {
 </script>
 
 <style scoped type="text/css">
-.resetPassWord 
-{
-  margin-top: 50px;
-  width: 100%;
-  height: 100%;
-}
 .m-list-group {
   padding: 0;
   margin: 0 0 20px;
@@ -175,19 +169,12 @@ export default {
   margin-top: 10px;
   line-height: 40px;
 }
-.fullscreen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 56789;
-}
 .register-box {
-  position: relative;
+  position: absolute;
   width: 500px;
-  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 0px 30px;
   background: white;
 }

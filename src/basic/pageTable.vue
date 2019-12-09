@@ -7,8 +7,6 @@
               size="mini"
               clearable
               style="width:200px"></el-input>
-    <br>
-    <br>
     <el-table ref="multipleTable"
               :data="tables.slice((currentPage-1)*pagesize,currentPage*pagesize)"
               tooltip-effect="dark"

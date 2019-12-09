@@ -16,7 +16,7 @@
         <el-menu-item index="1">过覆盖</el-menu-item>
         <el-menu-item index="2">弱覆盖</el-menu-item>
       </el-menu>
-      <div v-if="ptype === 'overCoverage'">
+      <div v-if="ptype === 'overCoverage'" style="margin-top: 10px">
         <label> 门限:</label>
         <input placeholder="请输入数字"
                v-model="form.overCoverage.threshold"
@@ -29,7 +29,7 @@
                @change="numberRange(form.overCoverage.persent,true)">
         <label>%</label>
       </div>
-      <div v-else="ptype === 'poorCoverage'">
+      <div v-else style="margin-top: 10px">
         <label>门限:</label>
         <input placeholder="请输入数字"
                v-model="form.poorCoverage.threshold"

@@ -20,7 +20,7 @@
       </div>
     </el-aside>
     <el-main>
-      <v-exportTable :tableData="result">
+      <v-exportTable :tableData="result"  style="margin-top: 10px;">
       </v-exportTable>
       <br>
       <el-table :data="result"

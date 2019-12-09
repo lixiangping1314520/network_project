@@ -1,12 +1,13 @@
 <template>
   <div class="map-wrapper">
     <div class="map-menu">
-      <el-row class="cell-list-header">站点列表</el-row>
+      <div class="cell-list-header">站点列表<i class="el-icon-search" @click='isSearch=!isSearch'></i></div>
       <input type="text"
              name="cellName"
              class="searchCell"
              placeholder="请输入搜索内容"
-             v-model="cellName">
+             v-model="cellName"
+             v-if='isSearch'>
       <div class="nothingCell"
            v-if="isCell">没有找到数据</div>
       <ul class="cell-list"
@@ -59,6 +60,7 @@ export default {
   data () {
     return {
       cellName: '',
+      isSearch: false,
       myDis: null,
       allPoints: [],
       points: [],
@@ -395,6 +397,11 @@ li {
   padding-left: 10px;
   font-size: 16px;
 }
+.el-icon-search {
+  margin-top: 12px;
+  float: right;
+  margin-right: 5px;
+}
 .cell-list {
   padding: 0 10px;
   background: white;
@@ -410,7 +417,7 @@ li {
 }
 .searchCell {
   width: 100%;
-  border: 1px solid gray;
+  border: 1px solid lightgray;
   padding: 10px 8px;
   box-sizing: border-box;
   margin: 10px 0;

@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen"
+  <div class="register"
        style="margin-left: 0px;">
     <div class="register-box">
       <div style="text-align: center">
@@ -129,9 +129,7 @@ export default {
         confirmPassword: this.confirmPassword,
         email: this.email
       }
-      console.log(1)
       this.$http.post(this.user.httppath + '/api/WebUser/Register', userMessage).then(res => {
-        console.log(res)
         if (res === '已经存在该用户名') {
           return this.$message.warning('用户名已存在')
         }
@@ -152,7 +150,7 @@ export default {
 
 }
 </script>
-<style type="text/css">
+<style type="text/css" scoped>
 .m-list-group {
   padding: 0;
   margin: 0 0 20px;
@@ -163,7 +161,7 @@ export default {
   margin-bottom: -1px;
   margin-top: 15px;
 }
-.fullscreen {
+.register {
   position: absolute;
   width: 100%;
   height: 100%;

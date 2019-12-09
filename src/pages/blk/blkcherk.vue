@@ -1,7 +1,6 @@
 <template>
   <el-container>
     <el-main>
-      <br>
       <el-upload class="elmro"
                  ref="upload"
                  :action="uploadAction"
@@ -26,7 +25,7 @@
         <a @click="down">模板下载 </a>
       </el-upload>
       <br>
-      <hr /> 
+      <hr style="border-top: 1px solid lightgray"/> 
       <el-button type="primary"
                  :loading="isloading"
                  size="mini"

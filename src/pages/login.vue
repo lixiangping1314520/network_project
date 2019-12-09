@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen"
+  <div class="login"
        style="margin-left: 0px;">
     <div class="login-box">
       <div style="text-align: center">
@@ -38,7 +38,7 @@
       </form>
     </div>
     <div class="reset"
-         v-show="resetPassword">
+         v-if="resetPassword">
       <reset-password @closeReset="closeReset"></reset-password>
     </div>
   </div>
@@ -100,7 +100,6 @@ export default {
           })
         } else {
           sessionStorage.setItem('pname', 'default')
-          console.log(res)
           this.login({
             username: this.username,
             password: this.password,
@@ -123,7 +122,7 @@ export default {
   }
 }
 </script>
-<style type="text/css">
+<style type="text/css" scoped>
 .m-list-group {
   padding: 0;
   margin: 0;
@@ -134,8 +133,9 @@ export default {
   margin-bottom: -1px;
   background-color: transparent;
   margin-top: 10px;
+  border: none;
 }
-.fullscreen {
+.login {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -143,8 +143,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border-left-width: 0px;
-  margin-left: 0px; */
+  
 }
 .login-box {
   position: relative;

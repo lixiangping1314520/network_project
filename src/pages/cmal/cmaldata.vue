@@ -14,8 +14,7 @@
           </el-table>
         </el-aside>
         <el-main>
-          <export-table :tableData="result"></export-table>
-          <br>
+          <export-table :tableData="result" style="margin-top: 10px;"></export-table>
           <el-table :data="result"
                     style="width: 100%">
             <el-table-column :label="key"

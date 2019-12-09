@@ -21,7 +21,7 @@
                   v-model="form.remarks"></el-input>
       </el-form-item>
       <el-button type="primary"
-                 style="margin-left:41%;"
+                 style="margin-left:50%;"
                  size="mini"
                  @click="onSubmit">立即创建</el-button>
     </el-form>
@@ -33,11 +33,18 @@
         我哪个去
       </div>
     </el-dialog> -->
+    <ChildView v-model='name' />
+    <span>farther:{{name}}</span>
   </el-container>
 </template>
 <script>
 import { mapState } from 'vuex'
+import ChildView from './child.vue'
+import EventBus from '@/basic/event-bus.js'
 export default {
+  components: {
+    ChildView
+  },
   computed: {
     ...mapState({
       prom: (state) => state.prom,
@@ -53,7 +60,8 @@ export default {
         recentlyTime: new Date(),
         remarks: ''
       },
-      isShow: true
+      isShow: true,
+      name: 'yujian'
     }
   },
   created: function () {
@@ -64,6 +72,8 @@ export default {
   },
   methods: {
     onSubmit () {
+      console.log(EventBus)
+      EventBus.$emit('getTarget', 'aha')
       const pattern = /^[a-zA-Z0-9\u4e00-\u9fa5]{2,20}$/
       if (!pattern.test(this.form.name)) {
         this.$notify({
@@ -117,14 +127,11 @@ export default {
 </script>
 
 <style type="text/css">
-.fullscreen {
-  /* border-style: ridge; */
-  /* margin-top: 1%;
-  margin-left: 38%; */
-  width: 500px;
-}
 .el-input {
   width: 350px;
+}
+.el-form {
+  margin: 0 auto;
 }
 .elmro {
   text-align: center;

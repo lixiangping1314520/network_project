@@ -1,8 +1,6 @@
 <template>
   <el-container>
     <el-main>
-      <br>
-      <br>
       <el-upload class="elmro"
                  ref="upload"
                  :action="uploadAction"
@@ -25,7 +23,7 @@
                    @click="submitUpload">上传到服务器</el-button>
       </el-upload>
       <br>
-      <hr />
+      <hr style="border-top: 1px solid lightgray" />
       <el-button @click="analysis"
                  size="mini"
                  :loading="isloading"

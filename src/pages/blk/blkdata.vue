@@ -19,10 +19,10 @@
         </el-pagination>
       </div>
     </el-aside>
-    <el-main>
+    <el-main style="padding: 10px">
       <el-main>
         <v-exportTable :tableData="result"></v-exportTable>
-        </br>
+        <br>
         <el-table :data="currentPageData_2"
                   style="width: 100%">
           <el-table-column :label="key"

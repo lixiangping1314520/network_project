@@ -36,7 +36,6 @@
                     @click="handleRest">修改密码</span></m-dropdown-item>
             <!-- <m-dropdown-item disabled>注销</m-dropdown-item> -->
             <div class="test-line"></div>
-            <!-- <m-dropdown-item name="login">退出账号</m-dropdown-item> -->
             <m-dropdown-item><span @click.prevent="goOut">退出账号</span></m-dropdown-item>
           </m-dropdown-panel>
         </m-dropdown>
@@ -52,8 +51,10 @@
         <m-dropdown align="right"
                     padding="0 10px">
           <a href="#"
-             style="padding:0 0px; color: inherit">
-            <i class="fa fa-gears"></i>
+             style="padding:0 0px; color: inherit; position: relative;
+    top: 3px;">
+            <!-- <i class="fa fa-gears"></i> -->
+            <img src="@/assets/setting.png" alt="" width="14px;">
           </a>
           <m-dropdown-panel style="width: 200px; min-height: 100px;">
             <el-form>
@@ -75,10 +76,6 @@
         </m-dropdown>
       </m-nav-item>
     </m-nav>
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e7dd54bb1eae08e9ef6d890995fdcf790718225
     <div class="reset"
          v-show="resetPassword">
       <reset-password @closeReset="closeReset"></reset-password>
@@ -188,13 +185,9 @@ export default {
 }
 .reset,
 .userMessage {
-<<<<<<< HEAD
-  /* position: fixed; */
-  position: relative;;
-=======
   position: fixed;
->>>>>>> 4e7dd54bb1eae08e9ef6d890995fdcf790718225
   top: 0;
+  background: rgba(0,0,0,.5);
   bottom: 0;
   left: 0;
   right: 0;

@@ -1,7 +1,7 @@
 <template>
   <el-container>
-    <el-header>
-      </br>
+    <el-header
+    style="position: relative;top: 30px;">
       <el-radio-group @change="typeChange"
                       v-model="kpiType"
                       size="mini">
@@ -25,7 +25,6 @@
         <el-aside width="300px">
           <br>
           <br>
-          <br>
           <v-selectTable ref='kpitable'
                          :tableData="pmData"
                          :columns="pmDataColums"> </v-selectTable>
@@ -33,16 +32,6 @@
         <el-main>
           <el-main>
             <v-pageTable :tableData="result"> </v-pageTable>
-            <!-- <el-table :data="result"
-                      style="width: 100%">
-              <el-table-column :label="key"
-                               v-for="(date, key) in result[0]"
-                               :key="key">
-                <template slot-scope="scope">
-                  {{scope.row[key]}}
-                </template>
-              </el-table-column>
-            </el-table> -->
           </el-main>
         </el-main>
       </el-container>

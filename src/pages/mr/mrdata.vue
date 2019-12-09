@@ -1,10 +1,10 @@
 <template>
   <el-container>
-    <el-header class="elmro">这是MR的数据</el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="200px" style="overflow: hidden;">
         <el-input placeholder="输入关键字进行过滤"
-                  v-model="filterText">
+                  v-model="filterText"
+                  style="width: 100%;">
         </el-input>
         <el-tree class="filter-tree"
                  :data="headerData2"
@@ -16,7 +16,7 @@
         </el-tree>
       </el-aside>
       <el-container>
-        <el-main>
+        <el-main style="padding: 10px 20px">
           <export-table :tableData="data_list"></export-table>
           <br>
           <el-table :data="data_list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
@@ -33,13 +33,14 @@
         </el-main>
         <el-footer>
           <div style="text-align: left">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
-                           :current-page.sync="currentPage"
-                           :page-size="pagesize"
-                           layout="prev, pager, next, jumper"
-                           :pager-count="5"
-                           :total="total">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="currentPage"
+              :page-size="pagesize"
+              layout="prev, pager, next, jumper"
+              :pager-count="5"
+              :total="total">
             </el-pagination>
           </div>
         </el-footer>

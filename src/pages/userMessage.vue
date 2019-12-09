@@ -1,6 +1,5 @@
 <template>
   <div class = "userMessage">
-    <!-- class="fullscreen" -->
     <div class="register-box">
       <div style="text-align: center">
         <img src="../assets/logo.png"
@@ -60,25 +59,15 @@ export default {
 }
 </script>
 <style scoped type="text/css">
-.userMessage {
-  margin-top: 50px;
-}
-.fullscreen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 56789;
-}
 .register-box {
-  position: relative;
+  position: absolute;
   width: 400px;
-  margin: 0 auto;
   padding: 5px 30px;
   background: white;
   color: black;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .register-box .logo {
   width: 100px;

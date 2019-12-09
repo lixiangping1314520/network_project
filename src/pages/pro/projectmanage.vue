@@ -32,13 +32,14 @@
                         type="textarea"
                         v-model="form.remarks"></el-input>
             </el-form-item>
-            <el-button style="margin-left:38%;"
+            <el-button style="margin-left:40%;"
                        type="primary"
                        size="mini"
                        @click="update">修改</el-button>
             <el-button type="primary"
                        size="mini"
                        @click="deletepro">删除</el-button>
+            <span>{{bus}}</span>
 
           </el-form>
         </el-container>
@@ -47,6 +48,7 @@
   </div>
 </template>
 <script>
+import EventBus from '@/basic/event-bus.js'
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 export default {
   computed: {
@@ -72,11 +74,17 @@ export default {
         createTime: new Date(),
         recentlyTime: new Date(),
         remarks: ''
-      }
+      },
+      bus: ''
     }
   },
   created () {
     this.load()
+    EventBus.$on('getTarget', value => {
+      alert(123)
+      this.bus = value
+    })
+    console.log(this.getHeaderDate)
   },
   methods: {
     ...mapMutations(['setData_prom', 'updateData_prom', 'deleteDate_prom', 'setpname_prom', 'updataStateProm']),

@@ -1,7 +1,6 @@
 <template>
   <div style="padding-left:10px;">
     <br>
-    <br>
     <el-upload class="elmro"
                ref="upload"
                :action="uploadAction"
@@ -23,7 +22,7 @@
                  type="success"
                  @click="submitUpload">上传到服务器</el-button>
     </el-upload>
-    <hr />
+    <hr style="border-top:1px solid lightgray"/>
     <el-button type="primary"
                size="mini"
                style="width:80px"
@@ -163,12 +162,14 @@
         <el-form-item label="扩容小区:">
           <el-input v-model="form.扩容后配置"></el-input>
         </el-form-item>
-        <el-button type="primary"
+        <div style="text-align: center;">
+          <el-button type="primary"
                    size="mini"
                    @click="onSubmit(selectrow)">确认</el-button>
-        <el-button type="primary"
-                   size="mini"
-                   @click="cancel()">取消</el-button>
+          <el-button type="primary"
+                    size="mini"
+                    @click="cancel()">取消</el-button>
+        </div>
       </el-form>
     </el-dialog>
     <br>

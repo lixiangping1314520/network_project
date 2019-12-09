@@ -48,11 +48,11 @@
                  icon="el-icon-search"
                  size="mini"
                  @click="counter()">开始查询</el-button>
-      </br>
+      <br>
       <div>
-        </br>
+        <br>
         备选项:
-        </br>
+        <br>
         <div>
           <el-date-picker v-model="time"
                           value-format="yyyy-MM-dd HH:hh:ss"

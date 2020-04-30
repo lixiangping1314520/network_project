@@ -49,7 +49,7 @@ export default {
     })
   },
   created () {
-    let username = JSON.parse(sessionStorage.getItem('user')).username
+    let username = JSON.parse(sessionStorage.getItem('user') || '{}').username
     this.$http.post(this.user.httppath + '/api/UserInfo/UserInfo', {
       username: username
     }).then((res) => {

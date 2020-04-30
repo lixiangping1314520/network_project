@@ -229,11 +229,12 @@ export default {
     getTable () {
       var heads = {
         headers: {
-          'username': JSON.parse(sessionStorage.user).username,
+          'username': JSON.parse(sessionStorage.user || '{}').username,
           'projectname': sessionStorage.pname,
           'filetype': 'map'
         }
       }
+      console.log(heads);
       this.$http.post(
         this.user.httppath + 'api/Geo/GetAllTable?neifiletype=lte',
         { neifiletype: 'lte' },
